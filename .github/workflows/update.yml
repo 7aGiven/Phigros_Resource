@@ -8,8 +8,10 @@ on:
 jobs:
   my_job:
     runs-on: ubuntu-22.04
+    outputs:
+      my_output: ${{ steps.step1.outputs.test}}
     steps:
       - uses: actions/setup-python@v4
         with:
           python-version: "3.10"
-      - run: ls
+      - run: python a.py

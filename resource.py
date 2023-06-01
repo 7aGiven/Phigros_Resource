@@ -20,7 +20,6 @@ with ZipFile(sys.argv[1]) as apk:
         data = json.load(f)
 
 
-os.chdir(__file__[:-11])
 for directory in ("music", "avatar", "illustrationLowRes"):
     shutil.rmtree(directory, True)
     os.mkdir(directory)

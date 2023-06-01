@@ -8,8 +8,6 @@ on:
 jobs:
   my_job:
     runs-on: ubuntu-22.04
-    outputs:
-      my_output: ${{ steps.step1.outputs.test}}
     steps:
-      - uses: actions/setup-python@v4
+      - uses: actions/checkout@v3
       - run: cd .idea

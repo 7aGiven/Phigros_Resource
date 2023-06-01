@@ -9,7 +9,10 @@ jobs:
   my_job:
     runs-on: ubuntu-22.04
     steps:
+      - uses: actions/setup-python@v4
+      - run: pip install UnityPy
       - uses: actions/checkout@v3
+      - run: python resource.py ${{ inputs.url }}
       - run: |
           git config user.name github-actions
           git config user.email github-actions@github.com

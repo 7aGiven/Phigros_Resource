@@ -1,0 +1,13 @@
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: "download url"
+        required: true
+        type: string
+jobs:
+  my_job:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/setup-python
+      - run: pip install UnityPy

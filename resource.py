@@ -10,11 +10,6 @@ from UnityPy.enums import ClassIDType
 from io import BytesIO
 
 
-for directory in ("music", "avatar", "illustrationLowRes"):
-    shutil.rmtree(directory, True)
-    os.mkdir(directory)
-
-
 env = Environment()
 with ZipFile(sys.argv[1]) as apk:
     for name in apk.namelist():
@@ -23,6 +18,12 @@ with ZipFile(sys.argv[1]) as apk:
                 env.load_file(f.read(), name = name[-39:])
     with apk.open("assets/aa/catalog.json") as f:
         data = json.load(f)
+
+
+os.chdir(__file__[:-11])
+for directory in ("music", "avatar", "illustrationLowRes"):
+    shutil.rmtree(directory, True)
+    os.mkdir(directory)
 
 
 key = base64.b64decode(data["m_KeyDataString"])

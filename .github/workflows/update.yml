@@ -12,6 +12,4 @@ jobs:
       my_output: ${{ steps.step1.outputs.test}}
     steps:
       - uses: actions/setup-python@v4
-        with:
-          python-version: "3.10"
-      - run: python resource.py
+      - run: cd .idea

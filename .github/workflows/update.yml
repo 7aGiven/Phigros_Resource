@@ -9,5 +9,4 @@ jobs:
   my_job:
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/setup-python
-      - run: pip install UnityPy
+      - uses: actions/setup-python@4

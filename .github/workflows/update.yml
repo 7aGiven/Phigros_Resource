@@ -5,6 +5,7 @@ on:
         description: "download url"
         required: true
         type: string
+permissions: write-all
 jobs:
   my_job:
     runs-on: ubuntu-22.04

@@ -10,9 +10,8 @@ from UnityPy.enums import ClassIDType
 from io import BytesIO
 
 
-for directory in ("music", "avatar", "illustrationLowRes"):
-    shutil.rmtree(directory, True)
-    os.mkdir(directory)
+shutil.rmtree("illustrationLowRes", True)
+os.mkdir("illustrationLowRes")
 
 
 env = Environment()

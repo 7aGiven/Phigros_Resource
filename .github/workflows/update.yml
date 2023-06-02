@@ -10,6 +10,8 @@ jobs:
   my_job:
     runs-on: ubuntu-22.04
     steps:
+      - run: pip -h
+      - run: pip3 -h
       - uses: actions/setup-python@v4
       - run: pip install UnityPy
       - uses: actions/checkout@v3

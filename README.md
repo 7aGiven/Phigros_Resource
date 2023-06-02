@@ -1,0 +1,2 @@
+# PhigrosLibrary_Resource
+本项目使用Github Actions自动更新定数表和曲绘

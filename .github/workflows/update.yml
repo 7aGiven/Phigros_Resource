@@ -10,15 +10,12 @@ jobs:
   my_job:
     runs-on: ubuntu-22.04
     steps:
-      - run: pip -h
-      - run: pip3 -h
-      - uses: actions/setup-python@v4
-      - run: pip install UnityPy
+      - run: pip3 install UnityPy
       - uses: actions/checkout@v3
       - run: |
           filename=`wget -nv --content-disposition "${{ inputs.url }}" 2>&1 | grep -o "com.PigeonGames.Phigros\-[0-9]*"`
-          python gameInformation.py $filename.apk
-          python resource.py $filename.apk
+          python3 gameInformation.py $filename.apk
+          python3 resource.py $filename.apk
           rm $filename.apk
           echo ${filename:24} > version.txt
       - run: |

@@ -84,25 +84,13 @@ save里是各种文件的写入，不需要的可以注释掉。
 classes = ClassIDType.TextAsset, ClassIDType.Sprite, ClassIDType.AudioClip
 def save(key, entry):
     print(key, entry)
-    if key[-12:] == ".0/music.wav":
-        key = key[:-12]
-        obj = env.files[entry].get_filtered_objects(classes)
-        obj = next(obj).read()
-        ioPool.submit(io, "music/%s.wav" % key, obj.samples["music.wav"])
-    elif key[-25:] == ".0/IllustrationLowRes.png":
+    if key[-25:] == ".0/IllustrationLowRes.png":
         key = key[:-25]
         obj = env.files[entry].get_filtered_objects(classes)
         obj = next(obj).read()
         bytesIO = BytesIO()
         obj.image.save(bytesIO, "png")
         ioPool.submit(io, "illustrationLowRes/%s.png" % key, bytesIO)
-    elif key[:7] == "avatar.":
-        key = key[7:]
-        obj = env.files[entry].get_filtered_objects(classes)
-        obj = next(obj).read()
-        bytesIO = BytesIO()
-        obj.image.save(bytesIO, "png")
-        ioPool.submit(io, "avatar/%s.png" % key, bytesIO)
 
 
 with ThreadPoolExecutor(1) as ioPool:

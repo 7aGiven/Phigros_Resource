@@ -14,7 +14,7 @@ jobs:
       - run: pip install UnityPy
       - uses: actions/checkout@v3
       - run: |
-          filename=`wget -nv --content-disposition "${{ inputs.url }}" | grep -o "com.PigeonGames.Phigros\-[0-9]*"`
+          filename=`wget -nv --content-disposition "${{ inputs.url }}" 2>&1 | grep -o "com.PigeonGames.Phigros\-[0-9]*"`
           python gameInformation.py $filename.apk
           python resource.py $filename.apk
           rm $filename.apk

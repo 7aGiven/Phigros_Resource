@@ -14,10 +14,11 @@ jobs:
       - run: pip install UnityPy
       - uses: actions/checkout@v3
       - run: |
-          wget -nv -O Phigros.apk "${{ inputs.url }}"
-          python gameInformation.py Phigros.apk
-          python resource.py Phigros.apk
-          rm Phigros.apk
+          filename=`wget -nv --content-disposition "${{ inputs.url }}" | grep -o "com.PigeonGames.Phigros\-[0-9]*"`
+          python gameInformation.py $filename.apk
+          python resource.py $filename.apk
+          rm $filename.apk
+          echo ${filename:24} > version.txt
       - run: |
           git config user.name github-actions
           git config user.email github-actions@github.com

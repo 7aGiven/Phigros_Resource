@@ -44,6 +44,7 @@ with zipfile.ZipFile(sys.argv[1]) as apk:
                 break
 
 
+
 position = data.index(b"\x16\x00\x00\x00Glaciaxion.SunsetRay.0\x00\x00\n")
 
 byteReader = ByteReader(data[position - 4:])
@@ -108,18 +109,21 @@ for i in range(byteReader.readInt()):
     print(json.dumps(result, ensure_ascii=False, indent=2))
     id = result["songsId"][:-2]
     difficulty.append([id] + result["difficulty"])
+    table.append([id, result["songsName"], result["composer"], result["illustrator"], "\\".join(result["charter"])])
 
 for i in range(byteReader.readInt()):
     result = readObject()
     print(json.dumps(result, ensure_ascii=False, indent=2))
     id = result["songsId"][:-2]
     difficulty.append([id] + result["difficulty"])
+    table.append([id, result["songsName"], result["composer"], result["illustrator"], "\\".join(result["charter"])])
 
 for i in range(byteReader.readInt()):
     result = readObject()
     print(json.dumps(result, ensure_ascii=False, indent=2))
     id = result["songsId"][:-2]
     difficulty.append([id] + result["difficulty"])
+    table.append([id, result["songsName"], result["composer"], result["illustrator"], "\\".join(result["charter"])])
 
 print(difficulty)
 print(table)
@@ -127,4 +131,9 @@ print(table)
 with open("difficulty.csv", "w") as f:
     for item in difficulty:
         f.write(",".join([str(x) for x in item]))
+        f.write("\n")
+
+with open("info.csv", "w") as f:
+    for item in table:
+        f.write("\\".join(item))
         f.write("\n")

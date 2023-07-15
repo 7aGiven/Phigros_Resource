@@ -1,33 +1,36 @@
-import shutil
-import os
-from zipfile import ZipFile
-import sys
-import json
 import base64
-from concurrent.futures import ThreadPoolExecutor
-from UnityPy import Environment
-from UnityPy.enums import ClassIDType
-from io import BytesIO
+from configparser import ConfigParser
+import json
+import os
+import shutil
+import sys
+from zipfile import ZipFile
 
 
-shutil.rmtree("illustrationLowRes", True)
-os.mkdir("illustrationLowRes")
+
+os.chdir(__file__[:-11])
+
+config = ConfigParser()
+config.read("config.ini")
+types = config["TYPES"]
+type_turple = ("avatar", "Chart_EZ", "Chart_HD", "Chart_IN", "Chart_AT", "illustrationBlur", "illustrationLowRes", "illustration", "music")
 
 
-env = Environment()
+
+
 with ZipFile(sys.argv[1]) as apk:
-    for name in apk.namelist():
-        if name.startswith("assets/aa/Android/"):
-            with apk.open(name) as f:
-                env.load_file(f.read(), name = name[-39:])
     with apk.open("assets/aa/catalog.json") as f:
         data = json.load(f)
+
+
+for directory in filter(lambda x:types.getboolean(x), type_turple):
+    shutil.rmtree(directory, True)
+    os.mkdir(directory)
 
 
 key = base64.b64decode(data["m_KeyDataString"])
 bucket = base64.b64decode(data["m_BucketDataString"])
 entry = base64.b64decode(data["m_EntryDataString"])
-
 
 
 class ByteReader:
@@ -67,37 +70,84 @@ for x in range(reader.readInt()):
     table.append((key_value, entry_value))
 
 
-def io(path, resource):
-    if type(resource) == BytesIO:
-        with open(path, "wb") as f:
-            f.write(resource.getbuffer())
-        resource.close()
-    else:
-        with open(path, "wb") as f:
-            f.write(resource)
-
-
-"""
-save里是各种文件的写入，不需要的可以注释掉。
-"""
-classes = ClassIDType.TextAsset, ClassIDType.Sprite, ClassIDType.AudioClip
-def save(key, entry):
-    print(key, entry)
-    if key[-25:] == ".0/IllustrationLowRes.png":
+def save_compress(key, entry):
+    if types.getboolean("avatar") and key[:7] == "avatar.":
+        key = key[7:]
+        with apk.open("assets/aa/Android/%s" % entry) as bundle:
+            with open("avatar/%s.bundle" % key, "wb") as f:
+                f.write(bundle.read())
+    elif types.getboolean("Chart_EZ") and key[-14:] == "/Chart_EZ.json":
+        key = key[:-14]
+        with apk.open("assets/aa/Android/%s" % entry) as bundle:
+            with open("Chart_EZ/%s.bundle" % key, "wb") as f:
+                f.write(bundle.read())
+    elif types.getboolean("Chart_HD") and key[-14:] == "/Chart_HD.json":
+        key = key[:-14]
+        with apk.open("assets/aa/Android/%s" % entry) as bundle:
+            with open("Chart_HD/%s.bundle" % key, "wb") as f:
+                f.write(bundle.read())
+    elif types.getboolean("Chart_IN") and key[-14:] == "/Chart_IN.json":
+        key = key[:-14]
+        with apk.open("assets/aa/Android/%s" % entry) as bundle:
+            with open("Chart_IN/%s.bundle" % key, "wb") as f:
+                f.write(bundle.read())
+    elif types.getboolean("Chart_AT") and key[-14:] == "/Chart_AT.json":
+        key = key[:-14]
+        with apk.open("assets/aa/Android/%s" % entry) as bundle:
+            with open("Chart_AT/%s.bundle" % key, "wb") as f:
+                f.write(bundle.read())
+    elif types.getboolean("illustrationBlur") and key[-23:] == ".0/IllustrationBlur.png":
+        key = key[:-23]
+        with apk.open("assets/aa/Android/%s" % entry) as bundle:
+            with open("illustrationBlur/%s.bundle" % key, "wb") as f:
+                f.write(bundle.read())
+    elif types.getboolean("illustrationLowRes") and key[-25:] == ".0/IllustrationLowRes.png":
         key = key[:-25]
-        obj = env.files[entry].get_filtered_objects(classes)
-        obj = next(obj).read()
-        bytesIO = BytesIO()
-        obj.image.save(bytesIO, "png")
-        ioPool.submit(io, "illustrationLowRes/%s.png" % key, bytesIO)
+        with apk.open("assets/aa/Android/%s" % entry) as bundle:
+            with open("illustrationLowRes/%s.bundle" % key, "wb") as f:
+                f.write(bundle.read())
+    elif types.getboolean("illustration") and key[-19:] == ".0/Illustration.png":
+        key = key[:-19]
+        with apk.open("assets/aa/Android/%s" % entry) as bundle:
+            with open("illustration/%s.bundle" % key, "wb") as f:
+                f.write(bundle.read())
+    elif types.getboolean("music") and key[-12:] == ".0/music.wav":
+        key = key[:-12]
+        with apk.open("assets/aa/Android/%s" % entry) as bundle:
+            with open("music/%s.bundle" % key, "wb") as f:
+                f.write(bundle.read())
 
-
-with ThreadPoolExecutor(1) as ioPool:
-    with ThreadPoolExecutor(min(8, os.cpu_count())) as pool:
+update = config["UPDATE"]
+if update.getint("main_story") == 0 and update.getint("other_song") == 0 and update.getint("side_story") == 0:
+    with ZipFile(sys.argv[1]) as apk:
         for key, entry in table:
             if type(key) == int:
                 continue
-            if key[:7] == "avatar.":
-                pool.submit(save, key, table[entry][0])
+            elif key[:7] == "avatar.":
+                save_compress(key,table[entry][0])
             elif key[:14] == "Assets/Tracks/" and key[14] != "#":
-                pool.submit(save, key[14:], table[entry][0])
+                save_compress(key[14:], table[entry][0])
+else:
+    l = []
+    with open("difficulty.csv") as f:
+        line = f.readline()
+        while line:
+            l.append(line.split(",", 2)[0])
+            line = f.readline()
+    index1 = l.index("Doppelganger.LeaF")
+    index2 = l.index("Poseidon.1112vsStar")
+    del l[index2:len(l) - update.getint("side_story")]
+    del l[index1:index2 - update.getint("other_song")]
+    del l[:index1 - update.getint("main_story")]
+    print(l)
+    with ZipFile(sys.argv[1]) as apk:
+        for key, entry in table:
+            if type(key) == int:
+                continue
+            elif key[:7] == "avatar.":
+                save_compress(key,table[entry][0])
+                continue
+            for id in l:
+                if key.startswith("Assets/Tracks/%s.0/" % id):
+                    save_compress(key[14:], table[entry][0])
+                    break

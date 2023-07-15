@@ -1,20 +1,56 @@
 # PhigrosLibrary_Resource
-本项目使用Github Actions自动更新定数表和曲绘
+本项目可从Phigros的apk文件获取资源
+
+资源包括
+
+定数
+
+曲id，曲名，曲师，画师，谱师
+
+头像图片，谱面文件，曲子音乐文件，曲绘(模糊)，曲绘(低质量)，曲绘
 # 介绍
 
-`/version.txt`为Phigros版本，有作为版本检查更新意图
+`gameInformation.py`可从apk获取定数表，曲id，曲名，曲师，画师，谱师
 
-`/difficulty.csv`为定数表
+定数表输出为difficulty.csv，其余输出为info.csv
 
-`illustrationLowRes`内为曲绘的低质量版
+`resource.py`依赖difficulty.csv，从apk内解压对应的bundle文件并重命名，
 
+`decompress.py`依赖resource.py的结果，将bundle文件解压为资源，如png，wav，json
+
+注：bundle文件的压缩率很高，适合传输至服务器,再用decompress.py解压
+
+# 配置文件 config.ini
+```ini
+[TYPES]
+avatar = true
+Chart_EZ = true
+Chart_HD = true
+Chart_IN = true
+Chart_AT = true
+illustrationBlur = true
+illustrationLowRes = true
+illustration = true
+music = true
+[UPDATE]
+# 主线
+main_story = 0
+# 单曲和合集
+other_song = 0
+# 支线
+side_story = 0
+```
+TYPES section为设定你需要哪些种类的资源，见README.md开头
+
+当UPDATE section全为0时，默认获取全部歌曲的资源
+
+当UPDATE section不是全为0时，会通过difficulty.csv获取最近的歌曲，当Phigros更新时使用，更新了哪个部分，更新了几首，运行resource.py时只会提取最近几首的资源
 # 使用示例
 ```shell
-rm -r /tmp/Phigros_Resource
-git clone https://github.com/7aGiven/PhigrosLibrary_Resource/ /tmp/Phigros_Resource
-
-mv /tmp/Phigros_Resource/difficulty.csv .
-rm -r illustrationLowRes
-mv /tmp/Phigros_Resource/illustrationLowRes .
-rm -rf /tmp/Phigros_Resource
+pip3 install UnityPy
+git clone https://github.com/7aGiven/PhigrosLibrary_Resource/
+cd PhigrosLibrary_Resource
+python3 gameInformation.py /path/to/Phigros.apk
+python3 resource.py /path/to/Phigros.apk
+python3 decompress.py
 ```

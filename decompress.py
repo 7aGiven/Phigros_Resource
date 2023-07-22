@@ -89,7 +89,9 @@ for t in type_turple:
 env = UnityPy.load(*filter(lambda x:types.getboolean(x), type_turple))
 with ThreadPoolExecutor(6) as pool:
     for key, entry in env.files.items():
-        save(key[:-6], entry)
+        index = key.rindex("/")
+        index = key.rfind("/", 0, index)
+        save(key[index + 1:-6], entry)
 queue.put((None,None))
 thread.join()
 print("%f秒" % round(time.time() - ti, 4))

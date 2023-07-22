@@ -15,7 +15,7 @@ os.chdir(__file__[:-13])
 
 
 config_parser = ConfigParser()
-config_parser.read("config.ini")
+config_parser.read("config.ini", "utf-8")
 types = config_parser["TYPES"]
 
 
@@ -90,7 +90,7 @@ def save(key, entry):
 env = Environment()
 thread = threading.Thread(target=io)
 thread.start()
-t = time.time()
+ti = time.time()
 type_turple = ("avatar", "Chart_EZ", "Chart_HD", "Chart_IN", "Chart_AT", "illustrationBlur", "illustrationLowRes", "illustration", "music")
 config = {}
 for t in type_turple:
@@ -101,4 +101,4 @@ with ThreadPoolExecutor(6) as pool:
         save(key, entry)
 queue.put((None,None))
 thread.join()
-print("%f秒" % round(time.time() - t, 4))
+print("%f秒" % round(time.time() - ti, 4))

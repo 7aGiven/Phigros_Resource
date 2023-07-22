@@ -11,7 +11,7 @@ from zipfile import ZipFile
 os.chdir(__file__[:-11])
 
 config = ConfigParser()
-config.read("config.ini")
+config.read("config.ini", "utf-8")
 types = config["TYPES"]
 type_turple = ("avatar", "Chart_EZ", "Chart_HD", "Chart_IN", "Chart_AT", "illustrationBlur", "illustrationLowRes", "illustration", "music")
 

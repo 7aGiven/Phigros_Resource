@@ -3,18 +3,18 @@
 
 资源包括
 
-定数
+定数，收藏品id对应中文标题，头像id
 
 曲id，曲名，曲师，画师，谱师
 
 头像图片，谱面文件，曲子音乐文件，曲绘(模糊)，曲绘(低质量)，曲绘
 # 介绍
 
-`gameInformation.py`可从apk获取定数表，曲id，曲名，曲师，画师，谱师
+`gameInformation.py`可从apk获取定数表，收藏品id，头像id，曲id，曲名，曲师，画师，谱师
 
-定数表输出为difficulty.csv，其余输出为info.csv
+定数表输出为difficulty.csv，收藏品输出为collection.csv，头像输出为avatar.txt和avatar.csv，其余输出为info.csv
 
-`resource.py`依赖difficulty.csv，从apk内解压对应的bundle文件并重命名，
+`resource.py`依赖difficulty.csv和avatar.csv，从apk内解压对应的bundle文件并重命名，
 
 `decompress.py`依赖resource.py的结果，将bundle文件解压为资源，如png，wav，json
 

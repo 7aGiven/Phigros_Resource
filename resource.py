@@ -13,9 +13,13 @@ os.chdir(__file__[:-11])
 config = ConfigParser()
 config.read("config.ini", "utf8")
 types = config["TYPES"]
-type_turple = ("avatar", "Chart_EZ", "Chart_HD", "Chart_IN", "Chart_AT", "illustrationBlur", "illustrationLowRes", "illustration", "music")
+type_list = ("avatar", "Chart_EZ", "Chart_HD", "Chart_IN", "Chart_AT", "illustrationBlur", "illustrationLowRes", "illustration", "music")
 
-
+def getbool(t):
+    if t[:6] == "Chart_":
+        return types.getboolean("Chart")
+    else:
+        return types.getboolean(t)
 
 
 with ZipFile(sys.argv[1]) as apk:
@@ -23,7 +27,7 @@ with ZipFile(sys.argv[1]) as apk:
         data = json.load(f)
 
 
-for directory in filter(lambda x:types.getboolean(x), type_turple):
+for directory in filter(lambda x:getbool(x), type_list):
     shutil.rmtree(directory, True)
     os.mkdir(directory)
 
@@ -78,25 +82,10 @@ def save_compress(key, entry):
         with apk.open("assets/aa/Android/%s" % entry) as bundle:
             with open("avatar/%s.bundle" % key, "wb") as f:
                 f.write(bundle.read())
-    elif types.getboolean("Chart_EZ") and key[-14:] == "/Chart_EZ.json":
-        key = key[:-14]
+    elif types.getboolean("Chart") and key[-14:-7] == "/Chart_" and key[-5:] == ".json":
+        key = key[:-5]
         with apk.open("assets/aa/Android/%s" % entry) as bundle:
-            with open("Chart_EZ/%s.bundle" % key, "wb") as f:
-                f.write(bundle.read())
-    elif types.getboolean("Chart_HD") and key[-14:] == "/Chart_HD.json":
-        key = key[:-14]
-        with apk.open("assets/aa/Android/%s" % entry) as bundle:
-            with open("Chart_HD/%s.bundle" % key, "wb") as f:
-                f.write(bundle.read())
-    elif types.getboolean("Chart_IN") and key[-14:] == "/Chart_IN.json":
-        key = key[:-14]
-        with apk.open("assets/aa/Android/%s" % entry) as bundle:
-            with open("Chart_IN/%s.bundle" % key, "wb") as f:
-                f.write(bundle.read())
-    elif types.getboolean("Chart_AT") and key[-14:] == "/Chart_AT.json":
-        key = key[:-14]
-        with apk.open("assets/aa/Android/%s" % entry) as bundle:
-            with open("Chart_AT/%s.bundle" % key, "wb") as f:
+            with open("Chart_%s/%s.bundle" % (key[-2:], key[:-9]), "wb") as f:
                 f.write(bundle.read())
     elif types.getboolean("illustrationBlur") and key[-23:] == ".0/IllustrationBlur.png":
         key = key[:-23]

@@ -56,13 +56,7 @@ def save(key, entry):
         bytesIO = BytesIO()
         obj.image.save(bytesIO, "png")
         queue.put((key + "png", bytesIO))
-    elif config["Chart_EZ"] and key[:9] == "Chart_EZ/":
-        queue.put((key + "json", obj.script))
-    elif config["Chart_HD"] and key[:9] == "Chart_HD/":
-        queue.put((key + "json", obj.script))
-    elif config["Chart_IN"] and key[:9] == "Chart_IN/":
-        queue.put((key + "json", obj.script))
-    elif config["Chart_AT"] and key[:9] == "Chart_AT/":
+    elif getbool("Chart") and key[:6] == "Chart_":
         queue.put((key + "json", obj.script))
     elif config["illustrationBlur"] and key[:17] == "illustrationBlur/":
         bytesIO = BytesIO()
@@ -83,10 +77,15 @@ thread = threading.Thread(target=io)
 thread.start()
 ti = time.time()
 type_turple = ("avatar", "Chart_EZ", "Chart_HD", "Chart_IN", "Chart_AT", "illustrationBlur", "illustrationLowRes", "illustration", "music")
+def getbool(t):
+    if t[:6] == "Chart_":
+        return types.getboolean("Chart")
+    else:
+        return types.getboolean(t)
 config = {}
 for t in type_turple:
-    config[t] = types.getboolean(t)
-env = UnityPy.load(*filter(lambda x:types.getboolean(x), type_turple))
+    config[t] = getbool(t)
+env = UnityPy.load(*filter(lambda x:getbool(x), type_turple))
 with ThreadPoolExecutor(6) as pool:
     for key, entry in env.files.items():
         index = key.rindex("/")

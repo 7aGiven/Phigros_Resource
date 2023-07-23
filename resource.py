@@ -11,7 +11,7 @@ from zipfile import ZipFile
 os.chdir(__file__[:-11])
 
 config = ConfigParser()
-config.read("config.ini", "utf-8")
+config.read("config.ini", "utf8")
 types = config["TYPES"]
 type_turple = ("avatar", "Chart_EZ", "Chart_HD", "Chart_IN", "Chart_AT", "illustrationBlur", "illustrationLowRes", "illustration", "music")
 
@@ -73,6 +73,8 @@ for x in range(reader.readInt()):
 def save_compress(key, entry):
     if types.getboolean("avatar") and key[:7] == "avatar.":
         key = key[7:]
+        if key != "Cipher1":
+            key = avatar[key]
         with apk.open("assets/aa/Android/%s" % entry) as bundle:
             with open("avatar/%s.bundle" % key, "wb") as f:
                 f.write(bundle.read())
@@ -117,6 +119,14 @@ def save_compress(key, entry):
             with open("music/%s.bundle" % key, "wb") as f:
                 f.write(bundle.read())
 
+if types.getboolean("avatar"):
+    avatar = {}
+    with open("avatar.csv") as f:
+        line = f.readline()[:-1]
+        while line:
+            l = line.split(",")
+            avatar[l[1]] = l[0]
+            line = f.readline()[:-1]
 update = config["UPDATE"]
 if update.getint("main_story") == 0 and update.getint("other_song") == 0 and update.getint("side_story") == 0:
     with ZipFile(sys.argv[1]) as apk:

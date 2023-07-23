@@ -15,7 +15,7 @@ os.chdir(__file__[:-13])
 
 
 config_parser = ConfigParser()
-config_parser.read("config.ini", "utf-8")
+config_parser.read("config.ini", "utf8")
 types = config_parser["TYPES"]
 
 

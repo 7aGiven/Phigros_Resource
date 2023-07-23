@@ -130,10 +130,10 @@ print(table)
 
 with open("difficulty.csv", "w") as f:
     for item in difficulty:
-        f.write(",".join([str(x) for x in item]))
+        f.write("\\".join([str(x) for x in item]))
         f.write("\n")
 
-with open("info.csv", "w") as f:
+with open("info.csv", "w", encoding="utf8") as f:
     for item in table:
         f.write("\\".join(item))
         f.write("\n")

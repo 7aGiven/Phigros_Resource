@@ -41,16 +41,16 @@ with zipfile.ZipFile(sys.argv[1]) as apk:
         env.load_file(f.read(), name="assets/bin/Data/globalgamemanagers.assets")
     with apk.open("assets/bin/Data/level0") as f:
         env.load_file(f.read())
-        for obj in env.objects:
-            if obj.type.name != "MonoBehaviour":
-                continue
-            data = obj.read()
-            if data.m_Script.get_obj().read().name == "GameInformation":
-                information = data.raw_data.tobytes()
-            elif data.m_Script.get_obj().read().name == "GetCollectionControl":
-                collection = data.raw_data.tobytes()
-            elif data.m_Script.get_obj().read().name == "TipsProvider":
-                tips = data.raw_data.tobytes()
+for obj in env.objects:
+    if obj.type.name != "MonoBehaviour":
+        continue
+    data = obj.read()
+    if data.m_Script.get_obj().read().name == "GameInformation":
+        information = data.raw_data.tobytes()
+    elif data.m_Script.get_obj().read().name == "GetCollectionControl":
+        collection = data.raw_data.tobytes()
+    elif data.m_Script.get_obj().read().name == "TipsProvider":
+        tips = data.raw_data.tobytes()
 
 
 
@@ -116,6 +116,9 @@ table = []
 for i in range(reader.readInt()):
     result = readObject()
     print(json.dumps(result, ensure_ascii=False, indent=2))
+    if len(result["levels"]) != 4:
+        result["difficulty"].pop()
+        result["charter"].pop()
     id = result["songsId"][:-2]
     difficulty.append([id] + result["difficulty"])
     table.append([id, result["songsName"], result["composer"], result["illustrator"], "\\".join(result["charter"])])
@@ -123,6 +126,9 @@ for i in range(reader.readInt()):
 for i in range(reader.readInt()):
     result = readObject()
     print(json.dumps(result, ensure_ascii=False, indent=2))
+    if len(result["levels"]) != 4:
+        result["difficulty"].pop()
+        result["charter"].pop()
     id = result["songsId"][:-2]
     difficulty.append([id] + result["difficulty"])
     table.append([id, result["songsName"], result["composer"], result["illustrator"], "\\".join(result["charter"])])
@@ -130,6 +136,9 @@ for i in range(reader.readInt()):
 for i in range(reader.readInt()):
     result = readObject()
     print(json.dumps(result, ensure_ascii=False, indent=2))
+    if len(result["levels"]) != 4:
+        result["difficulty"].pop()
+        result["charter"].pop()
     id = result["songsId"][:-2]
     difficulty.append([id] + result["difficulty"])
     table.append([id, result["songsName"], result["composer"], result["illustrator"], "\\".join(result["charter"])])

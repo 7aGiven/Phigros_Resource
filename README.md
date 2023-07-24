@@ -43,11 +43,21 @@ TYPES section为设定你需要哪些种类的资源，见README.md开头
 
 当UPDATE section不是全为0时，会通过difficulty.csv获取最近的歌曲，当Phigros更新时使用，更新了哪个部分，更新了几首，运行resource.py时只会提取最近几首的资源
 # 使用示例
+taptap下载的apk
 ```shell
 pip3 install UnityPy
 git clone https://github.com/7aGiven/PhigrosLibrary_Resource/
 cd PhigrosLibrary_Resource
 python3 gameInformation.py /path/to/Phigros.apk
 python3 resource.py /path/to/Phigros.apk
+python3 decompress.py
+```
+https://616.sb下载的apk和obb
+```shell
+pip3 install UnityPy
+git clone https://github.com/7aGiven/PhigrosLibrary_Resource/
+cd PhigrosLibrary_Resource
+python3 gameInformation.py /path/to/Phigros.apk
+python3 resource.py /path/to/Phigros.obb
 python3 decompress.py
 ```

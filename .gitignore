@@ -1,0 +1,13 @@
+*.apk
+*.obb
+*.csv
+*.txt
+avatar/
+Chart_EZ/
+Chart_HD/
+Chart_IN/
+Chart_AT/
+illustration/
+illustrationBlur/
+illustrationLowRes/
+music/

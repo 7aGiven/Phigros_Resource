@@ -49,6 +49,8 @@ with zipfile.ZipFile(sys.argv[1]) as apk:
                 information = data.raw_data.tobytes()
             elif data.m_Script.get_obj().read().name == "GetCollectionControl":
                 collection = data.raw_data.tobytes()
+            elif data.m_Script.get_obj().read().name == "TipsProvider":
+                tips = data.raw_data.tobytes()
 
 
 
@@ -186,4 +188,14 @@ with open("avatar.txt", "w") as f:
 with open("avatar.csv", "w") as f:
     for item in table:
         f.write(",".join(item))
+        f.write("\n")
+
+reader = ByteReader(tips)
+reader.position = 8
+table = []
+for i in range(reader.readInt()):
+    table.append(reader.readString())
+with open("tips.txt", "w") as f:
+    for item in table:
+        f.write(item)
         f.write("\n")

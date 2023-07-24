@@ -1,4 +1,4 @@
-# PhigrosLibrary_Resource
+# Phigros_Resource
 本项目可从Phigros的apk文件获取资源
 
 资源包括

@@ -48,8 +48,8 @@ taptap下载的apk
 pip3 install UnityPy
 git clone https://github.com/7aGiven/PhigrosLibrary_Resource/
 cd PhigrosLibrary_Resource
-python3 gameInformation.py /path/to/Phigros.apk
-python3 resource.py /path/to/Phigros.apk
+python3 gameInformation.py Phigros.apk
+python3 resource.py Phigros.apk
 python3 decompress.py
 ```
 https://616.sb下载的apk和obb
@@ -57,7 +57,7 @@ https://616.sb下载的apk和obb
 pip3 install UnityPy
 git clone https://github.com/7aGiven/PhigrosLibrary_Resource/
 cd PhigrosLibrary_Resource
-python3 gameInformation.py /path/to/Phigros.apk
-python3 resource.py /path/to/Phigros.obb
+python3 gameInformation.py Phigros.apk
+python3 resource.py Phigros.obb
 python3 decompress.py
 ```

@@ -1,8 +1,8 @@
-import zipfile
-from UnityPy import Environment
+import json
 import sys
 import struct
-import json
+from UnityPy import Environment
+import zipfile
 
 
 
@@ -10,6 +10,7 @@ class ByteReader:
     def __init__(self, data:bytes):
         self.data = data
         self.position = 0
+        self.d = {int: self.readInt, float: self.readFloat, str: self.readString}
 
     def readInt(self):
         self.position += 4
@@ -32,6 +33,28 @@ class ByteReader:
         self.position += length // 4 * 4
         if length % 4 != 0:
             self.position += 4
+    
+    def readSchema(self, schema: dict):
+        result = []
+        for x in range(self.readInt()):
+            item = {}
+            for key, value in schema.items():
+                if value in (int, str, float):
+                    item[key] = self.d[value]()
+                elif type(value) == list:
+                    l = []
+                    for i in range(self.readInt()):
+                        l.append(self.d[value[0]]())
+                    item[key] = l
+                elif type(value) == tuple:
+                    for t in value:
+                        self.d[t]()
+                elif type(value) == dict:
+                    item[key] = self.readSchema(value)
+                else:
+                    raise Exception("无")
+            result.append(item)
+        return result
 
 
 
@@ -57,98 +80,29 @@ for obj in env.objects:
 position = information.index(b"\x16\x00\x00\x00Glaciaxion.SunsetRay.0\x00\x00\n")
 
 reader = ByteReader(information[position - 4:])
-
-def readObject():
-    item = {}
-
-    item["songsId"] = reader.readString()
-    item["songsKey"] = reader.readString()
-    item["songsName"] = reader.readString()
-    item["songsTitle"] = reader.readString()
-    
-    item["difficulty"] = []
-    for i in range(reader.readInt()):
-        difficulty = reader.readFloat()
-        if difficulty:
-            item["difficulty"].append(round(difficulty,1))
-
-    item["illustrator"] = reader.readString()
-
-    item["charter"] = []
-    for i in range(reader.readInt()):
-        charter = reader.readString()
-        if len(charter) != 0:
-            item["charter"].append(charter)
-
-    item["composer"] = reader.readString()
-    
-    item["levels"] = []
-    for i in range(reader.readInt()):
-        item["levels"].append(reader.readString())
-
-    item["previewTime"] = reader.readFloat()
-
-    unlockInfoList = []
-    for x in range(reader.readInt()):
-        unlockInfo = {}
-        unlockType = reader.readInt()
-        if not unlockType:
-            reader.position += 4
-            continue
-        unlockInfo["unlockType"] = unlockType
-        unlockInfo["unlockInfo"] = []
-        for i in range(reader.readInt()):
-            unlockInfo["unlockInfo"].append(reader.readString())
-        unlockInfoList.append(unlockInfo)
-    if unlockInfoList:
-        item["unlockInfo"] = unlockInfoList
-
-
-    length = reader.readInt()
-    reader.position += 4 * length
-    return item
-
-
-
+information_schema = {"songId": str, "songKey": str, "songName": str, "songTitle": str, "difficulty": [float], "illustrator": str, "charter": [str], "composer": str, "levels": [str], "previewTime": float, "unlockList": {"unlockType": int, "unlockInfo": [str]}, "n": [int]}
 difficulty = []
 table = []
-
-for i in range(reader.readInt()):
-    result = readObject()
-    print(json.dumps(result, ensure_ascii=False, indent=2))
-    if len(result["levels"]) != 4:
-        result["difficulty"].pop()
-        result["charter"].pop()
-    id = result["songsId"][:-2]
-    difficulty.append([id] + result["difficulty"])
-    table.append([id, result["songsName"], result["composer"], result["illustrator"], "\\".join(result["charter"])])
-
-for i in range(reader.readInt()):
-    result = readObject()
-    print(json.dumps(result, ensure_ascii=False, indent=2))
-    if len(result["levels"]) != 4:
-        result["difficulty"].pop()
-        result["charter"].pop()
-    id = result["songsId"][:-2]
-    difficulty.append([id] + result["difficulty"])
-    table.append([id, result["songsName"], result["composer"], result["illustrator"], "\\".join(result["charter"])])
-
-for i in range(reader.readInt()):
-    result = readObject()
-    print(json.dumps(result, ensure_ascii=False, indent=2))
-    if len(result["levels"]) != 4:
-        result["difficulty"].pop()
-        result["charter"].pop()
-    id = result["songsId"][:-2]
-    difficulty.append([id] + result["difficulty"])
-    table.append([id, result["songsName"], result["composer"], result["illustrator"], "\\".join(result["charter"])])
+for i in range(3):
+    for item in reader.readSchema(information_schema):
+        item["songId"] = item["songId"][:-2]
+        if len(item["levels"]) == 5:
+            item["difficulty"].pop()
+            item["charter"].pop()
+        if item["difficulty"][-1] == 0:
+            item["difficulty"].pop()
+            item["charter"].pop()
+        for i in range(len(item["difficulty"])):
+            item["difficulty"][i] = round(item["difficulty"][i], 1)
+        difficulty.append([item["songId"]] + item["difficulty"])
+        table.append((item["songId"], item["songName"], item["composer"], item["illustrator"], *item["charter"]))
 
 print(difficulty)
 print(table)
 
 with open("difficulty.csv", "w") as f:
     for item in difficulty:
-        f.write(",".join([str(x) for x in item]))
+        f.write(",".join(map(str, item)))
         f.write("\n")
 
 with open("info.csv", "w", encoding="utf8") as f:
@@ -157,54 +111,27 @@ with open("info.csv", "w", encoding="utf8") as f:
         f.write("\n")
 
 reader = ByteReader(collection)
-table = []
-for i in range(reader.readInt()):
-    reader.position += 3 * 4
-    reader.skipString()
-    reader.skipString()
-    reader.skipString()
-    key = reader.readString()
-    index = reader.readInt()
-    reader.position += 4
-    title = reader.readString()
-    reader.readString()
-    reader.readString()
-    reader.readString()
-    reader.readString()
-    if index == 1:
-        table.append((key, title))
+collection_schema = {1: (int, int, int, str, str, str), "key": str, "index": int, 2: (int,), "title": str, 3: (str, str, str, str)}
 
 with open("collection.csv", "w") as f:
-    for item in table:
-        f.write(",".join(item))
-        f.write("\n")
+    for item in reader.readSchema(collection_schema):
+        if item["index"] == 1:
+            f.write("%s,%s\n" % (item["key"], item["title"]))
 
-table = []
-for i in range(reader.readInt()):
-    reader.position += 3 * 4
-    reader.skipString()
-    reader.position += 4
-    reader.skipString()
-    key = reader.readString()
-    avatar = reader.readString()
-    table.append((key, avatar[7:]))
+avatar_schema = {1: (int, int, int, str, int, str), "id": str, "file": str}
+table = reader.readSchema(avatar_schema)
 
 with open("avatar.txt", "w") as f:
     for item in table:
-        f.write(item[0])
+        f.write(item["id"])
         f.write("\n")
 
 with open("avatar.csv", "w") as f:
     for item in table:
-        f.write(",".join(item))
-        f.write("\n")
+        f.write("%s,%s\n" % (item["id"], item["file"][7:]))
 
-reader = ByteReader(tips)
-reader.position = 8
-table = []
-for i in range(reader.readInt()):
-    table.append(reader.readString())
+reader = ByteReader(tips[8:])
 with open("tips.txt", "w") as f:
-    for item in table:
-        f.write(item)
+    for i in range(reader.readInt()):
+        f.write(reader.readString())
         f.write("\n")

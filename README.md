@@ -46,7 +46,7 @@ TYPES section为设定你需要哪些种类的资源，见README.md开头
 taptap下载的apk
 ```shell
 pip3 install UnityPy
-git clone https://github.com/7aGiven/PhigrosLibrary_Resource/
+git clone --depth 1 https://github.com/7aGiven/PhigrosLibrary_Resource/
 cd PhigrosLibrary_Resource
 python3 gameInformation.py Phigros.apk
 python3 resource.py Phigros.apk
@@ -55,7 +55,7 @@ python3 decompress.py
 https://616.sb下载的apk和obb
 ```shell
 pip3 install UnityPy
-git clone https://github.com/7aGiven/PhigrosLibrary_Resource/
+git clone --depth 1 https://github.com/7aGiven/PhigrosLibrary_Resource/
 cd PhigrosLibrary_Resource
 python3 gameInformation.py Phigros.apk
 python3 resource.py Phigros.obb

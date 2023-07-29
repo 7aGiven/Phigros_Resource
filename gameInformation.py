@@ -1,6 +1,6 @@
 import json
-import sys
 import struct
+import sys
 from UnityPy import Environment
 import zipfile
 
@@ -100,7 +100,7 @@ for i in range(3):
 print(difficulty)
 print(table)
 
-with open("difficulty.csv", "w") as f:
+with open("difficulty.csv", "w", encoding="utf8") as f:
     for item in difficulty:
         f.write(",".join(map(str, item)))
         f.write("\n")

@@ -1,6 +1,7 @@
 from concurrent.futures import ThreadPoolExecutor
 from configparser import ConfigParser
 from io import BytesIO
+import gc
 import os
 from queue import Queue
 import threading
@@ -19,32 +20,37 @@ config_parser.read("config.ini", "utf8")
 types = config_parser["TYPES"]
 
 
-
+queue_load = Queue()
 queue = Queue()
 def io():
     while True:
-        path, resource = queue.get()
-        print(path)
-        if path == None:
+        item = queue.get()
+        if item == None:
             break
-        elif type(resource) == BytesIO:
-            with open(path, "wb") as f:
-                f.write(resource.getbuffer())
-            resource.close()
+        elif type(item) == str:
+            queue_load.put(UnityPy.load(item))
         else:
-            with open(path, "wb") as f:
-                f.write(resource)
+            path, resource, format = item
+            print(path)
+            if type(resource) == BytesIO:
+                with open(path + format, "wb") as f:
+                    f.write(resource.getbuffer())
+                resource.close()
+            else:
+                with open(path, "wb") as f:
+                    f.write(resource)
+            os.remove(path + "bundle")
 
 def save_image(image, path):
     bytesIO = BytesIO()
     t1 = time.time()
     image.save(bytesIO, "png")
     print("%f秒" % round(time.time() - t1, 4))
-    queue.put((path, bytesIO))
+    queue.put((path, bytesIO, "png"))
 
 def save_music(music, path):
     t1 = time.time()
-    queue.put((path, music.samples["music.wav"]))
+    queue.put((path, music.samples["music.wav"], "wav"))
     print("%f秒" % round(time.time() - t1, 4))
 
 
@@ -55,20 +61,19 @@ def save(key, entry):
     if config["avatar"] and key[:7] == "avatar/":
         bytesIO = BytesIO()
         obj.image.save(bytesIO, "png")
-        queue.put((key + "png", bytesIO))
+        queue.put((key, bytesIO, "png"))
     elif getbool("Chart") and key[:6] == "Chart_":
-        queue.put((key + "json", obj.script))
+        queue.put((key, obj.script, "json"))
     elif config["illustrationBlur"] and key[:17] == "illustrationBlur/":
         bytesIO = BytesIO()
         obj.image.save(bytesIO, "png")
-        queue.put((key + "png", bytesIO))
+        queue.put((key, bytesIO, "png"))
     elif config["illustrationLowRes"] and key[:19] == "illustrationLowRes/":
-        pool.submit(save_image, obj.image, key + "png")
+        pool.submit(save_image, obj.image, key)
     elif config["illustration"] and key[:13] == "illustration/":
-        pool.submit(save_image, obj.image, key + "png")
+        pool.submit(save_image, obj.image, key)
     elif config["music"] and key[:6] == "music/":
-        pool.submit(save_music, obj, key + "wav")
-    os.remove(key + "bundle")
+        pool.submit(save_music, obj, key)
         
 
 
@@ -85,12 +90,17 @@ def getbool(t):
 config = {}
 for t in type_turple:
     config[t] = getbool(t)
-env = UnityPy.load(*filter(lambda x:getbool(x), type_turple))
 with ThreadPoolExecutor(6) as pool:
-    for key, entry in env.files.items():
-        index = key.rindex("/")
-        index = key.rfind("/", 0, index)
-        save(key[index + 1:-6], entry)
-queue.put((None,None))
+    for dir in filter(lambda x:getbool(x), type_turple):
+        queue.put(dir)
+        env = queue_load.get()
+        for key, entry in env.files.items():
+            index = key.rindex("/")
+            index = key.rfind("/", 0, index)
+            save(key[index + 1:-6], entry)
+        del entry
+        del env
+        gc.collect()
+queue.put(None)
 thread.join()
 print("%f秒" % round(time.time() - ti, 4))

@@ -29,6 +29,8 @@ def io():
             break
         elif type(item) == str:
             queue_load.put(UnityPy.load(item))
+        elif type(item) == list:
+            queue_load.put(UnityPy.load(*item))
         else:
             path, resource, format = item
             print(path)
@@ -37,7 +39,7 @@ def io():
                     f.write(resource.getbuffer())
                 resource.close()
             else:
-                with open(path, "wb") as f:
+                with open(path + format, "wb") as f:
                     f.write(resource)
             os.remove(path + "bundle")
 
@@ -91,7 +93,7 @@ config = {}
 for t in type_turple:
     config[t] = getbool(t)
 with ThreadPoolExecutor(6) as pool:
-    for dir in filter(lambda x:getbool(x), type_turple):
+    def decompress(dir):
         queue.put(dir)
         env = queue_load.get()
         for key, entry in env.files.items():
@@ -101,6 +103,15 @@ with ThreadPoolExecutor(6) as pool:
         del entry
         del env
         gc.collect()
+    for dir in filter(lambda x:getbool(x), type_turple):
+        if dir == "illustration":
+            l = os.listdir(dir)
+            for i in range(len(l)):
+                l[i] = dir + "/" + l[i]
+            decompress(l[:100])
+            decompress(l[100:])
+        else:
+            decompress(dir)
 queue.put(None)
 thread.join()
 print("%f秒" % round(time.time() - ti, 4))

@@ -113,7 +113,7 @@ with open("info.csv", "w", encoding="utf8") as f:
 reader = ByteReader(collection)
 collection_schema = {1: (int, int, int, str, str, str), "key": str, "index": int, 2: (int,), "title": str, 3: (str, str, str, str)}
 
-with open("collection.csv", "w") as f:
+with open("collection.csv", "w", encoding="utf8") as f:
     for item in reader.readSchema(collection_schema):
         if item["index"] == 1:
             f.write("%s,%s\n" % (item["key"], item["title"]))
@@ -121,7 +121,7 @@ with open("collection.csv", "w") as f:
 avatar_schema = {1: (int, int, int, str, int, str), "id": str, "file": str}
 table = reader.readSchema(avatar_schema)
 
-with open("avatar.txt", "w") as f:
+with open("avatar.txt", "w", encoding="utf8") as f:
     for item in table:
         f.write(item["id"])
         f.write("\n")
@@ -131,7 +131,7 @@ with open("avatar.csv", "w") as f:
         f.write("%s,%s\n" % (item["id"], item["file"][7:]))
 
 reader = ByteReader(tips[8:])
-with open("tips.txt", "w") as f:
+with open("tips.txt", "w", encoding="utf8") as f:
     for i in range(reader.readInt()):
         f.write(reader.readString())
         f.write("\n")

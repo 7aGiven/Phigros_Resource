@@ -128,7 +128,7 @@ if update.getint("main_story") == 0 and update.getint("other_song") == 0 and upd
                 save_compress(key[14:], table[entry][0])
 else:
     l = []
-    with open("difficulty.csv") as f:
+    with open("difficulty.csv", encoding="utf8") as f:
         line = f.readline()
         while line:
             l.append(line.split(",", 2)[0])

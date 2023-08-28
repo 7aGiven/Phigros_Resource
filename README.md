@@ -14,11 +14,7 @@
 
 定数表输出为difficulty.csv，收藏品输出为collection.csv，头像输出为avatar.txt，tips输出为tips.txt，其余输出为info.csv
 
-`resource.py`依赖difficulty.csv和avatar.csv，从apk内解压对应的bundle文件并重命名，
-
-`decompress.py`依赖resource.py的结果，将bundle文件解压为资源，如png，wav，json
-
-注：bundle文件的压缩率很高，适合传输至服务器,再用decompress.py解压
+`resource.py`依赖difficulty.csv和avatar.csv，从apk内解压出头像、铺面、曲绘、音乐资源，为png，wav，json
 
 # 配置文件 config.ini
 ```ini
@@ -50,7 +46,6 @@ git clone --depth 1 https://github.com/7aGiven/PhigrosLibrary_Resource/
 cd PhigrosLibrary_Resource
 python3 gameInformation.py Phigros.apk
 python3 resource.py Phigros.apk
-python3 decompress.py
 ```
 https://616.sb下载的apk和obb
 ```shell
@@ -59,5 +54,4 @@ git clone --depth 1 https://github.com/7aGiven/PhigrosLibrary_Resource/
 cd PhigrosLibrary_Resource
 python3 gameInformation.py Phigros.apk
 python3 resource.py Phigros.obb
-python3 decompress.py
 ```

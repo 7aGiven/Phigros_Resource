@@ -1,9 +1,17 @@
 import base64
+from concurrent.futures import ThreadPoolExecutor
 from configparser import ConfigParser
+import gc
+from io import BytesIO
 import json
 import os
+from queue import Queue
 import shutil
 import sys
+import threading
+import time
+from UnityPy import Environment
+from UnityPy.enums import ClassIDType
 from zipfile import ZipFile
 
 
@@ -49,7 +57,6 @@ class ByteReader:
 table = []
 reader = ByteReader(bucket)
 for x in range(reader.readInt()):
-    print(x, end=" ")
     key_position = reader.readInt()
     key_type = key[key_position]
     key_position += 1
@@ -65,48 +72,88 @@ for x in range(reader.readInt()):
         key_value = key[key_position]
     else:
         raise BaseException(key_position, key_type)
-    print(key_value, end=" ")
     for i in range(reader.readInt()):
         entry_position = reader.readInt()
         entry_value = entry[4+28*entry_position:4+28*entry_position+28]
         entry_value = entry_value[8]^entry_value[9]<<8
-    print(entry_value)
-    table.append((key_value, entry_value))
+    table.append([key_value, entry_value])
+for i in range(len(table)):
+    if table[i][1] != 65535:
+        table[i][1] = table[table[i][1]][0]
+for i in range(len(table) - 1, -1, -1):
+    if type(table[i][0]) == int or table[i][0][:15] == "Assets/Tracks/#" or table[i][0][:14] != "Assets/Tracks/" and table[i][0][:7] != "avatar.":
+        del table[i]
+    elif table[i][0][:14] == "Assets/Tracks/":
+        table[i][0] = table[i][0][14:]
+for key, value in table:
+    print(key, value)
 
 
-def save_compress(key, entry):
+
+queue_out = Queue()
+queue_in = Queue()
+def io():
+    while True:
+        item = queue_in.get()
+        if item == None:
+            break
+        elif type(item) == list:
+            env = Environment()
+            for i in range(1, len(item)):
+                env.load_file(item[0].read("assets/aa/Android/%s" % item[i][1]), name=item[i][0])
+            queue_out.put(env)
+            del env
+        else:
+            path, resource = item
+            print(path)
+            if type(resource) == BytesIO:
+                with resource:
+                    with open(path, "wb") as f:
+                        f.write(resource.getbuffer())
+            else:
+                with open(path, "wb") as f:
+                    f.write(resource)
+
+            
+def save_image(path, image):
+    bytesIO = BytesIO()
+    t1 = time.time()
+    image.save(bytesIO, "png")
+    print("%f秒" % round(time.time() - t1, 4))
+    queue_in.put((path, bytesIO))
+
+def save_music(path, music):
+    t1 = time.time()
+    queue_in.put((path, music.samples["music.wav"]))
+    print("%f秒" % round(time.time() - t1, 4))
+
+classes = ClassIDType.TextAsset, ClassIDType.Sprite, ClassIDType.AudioClip
+def save(key, entry):
+    obj = entry.get_filtered_objects(classes)
+    obj = next(obj).read()
     if types.getboolean("avatar") and key[:7] == "avatar.":
         key = key[7:]
         if key != "Cipher1":
             key = avatar[key]
-        with apk.open("assets/aa/Android/%s" % entry) as bundle:
-            with open("avatar/%s.bundle" % key, "wb") as f:
-                f.write(bundle.read())
+        bytesIO = BytesIO()
+        obj.image.save(bytesIO, "png")
+        queue_in.put(("avatar/%s.png" % key, bytesIO))
     elif types.getboolean("Chart") and key[-14:-7] == "/Chart_" and key[-5:] == ".json":
-        key = key[:-5]
-        with apk.open("assets/aa/Android/%s" % entry) as bundle:
-            with open("Chart_%s/%s.bundle" % (key[-2:], key[:-9]), "wb") as f:
-                f.write(bundle.read())
+        queue_in.put(("Chart_%s/%s.json" % (key[-7:-5], key[:-14]), obj.script))
     elif types.getboolean("illustrationBlur") and key[-23:] == ".0/IllustrationBlur.png":
         key = key[:-23]
-        with apk.open("assets/aa/Android/%s" % entry) as bundle:
-            with open("illustrationBlur/%s.bundle" % key, "wb") as f:
-                f.write(bundle.read())
+        bytesIO = BytesIO()
+        obj.image.save(bytesIO, "png")
+        queue_in.put(("illustrationBlur/%s.png" % key, bytesIO))
     elif types.getboolean("illustrationLowRes") and key[-25:] == ".0/IllustrationLowRes.png":
         key = key[:-25]
-        with apk.open("assets/aa/Android/%s" % entry) as bundle:
-            with open("illustrationLowRes/%s.bundle" % key, "wb") as f:
-                f.write(bundle.read())
+        pool.submit(save_image, "illustrationLowRes/%s.png" % key, obj.image)
     elif types.getboolean("illustration") and key[-19:] == ".0/Illustration.png":
         key = key[:-19]
-        with apk.open("assets/aa/Android/%s" % entry) as bundle:
-            with open("illustration/%s.bundle" % key, "wb") as f:
-                f.write(bundle.read())
+        pool.submit(save_image, "illustration/%s.png" % key, obj.image)
     elif types.getboolean("music") and key[-12:] == ".0/music.wav":
         key = key[:-12]
-        with apk.open("assets/aa/Android/%s" % entry) as bundle:
-            with open("music/%s.bundle" % key, "wb") as f:
-                f.write(bundle.read())
+        pool.submit(save_music, "music/%s.wav" % key, obj)
 
 if types.getboolean("avatar"):
     avatar = {}
@@ -116,37 +163,55 @@ if types.getboolean("avatar"):
             l = line.split(",")
             avatar[l[1]] = l[0]
             line = f.readline()[:-1]
+
+thread = threading.Thread(target=io)
+thread.start()
+ti = time.time()
 update = config["UPDATE"]
-if update.getint("main_story") == 0 and update.getint("other_song") == 0 and update.getint("side_story") == 0:
-    with ZipFile(sys.argv[1]) as apk:
-        for key, entry in table:
-            if type(key) == int:
-                continue
-            elif key[:7] == "avatar.":
-                save_compress(key,table[entry][0])
-            elif key[:14] == "Assets/Tracks/" and key[14] != "#":
-                save_compress(key[14:], table[entry][0])
-else:
-    l = []
-    with open("difficulty.csv", encoding="utf8") as f:
-        line = f.readline()
-        while line:
-            l.append(line.split(",", 2)[0])
+with ThreadPoolExecutor(6) as pool:
+    if update.getint("main_story") == 0 and update.getint("other_song") == 0 and update.getint("side_story") == 0:
+        with ZipFile(sys.argv[1]) as apk:
+            size = 0
+            l = [apk]
+            for key, entry in table:
+                l.append((key, entry))
+                info = apk.getinfo("assets/aa/Android/%s" % entry)
+                size += info.file_size
+                print(size)
+                if size > 32 * 1024 * 1024:
+                    queue_in.put(l)
+                    env = queue_out.get()
+                    for ikey, ientry in env.files.items():
+                        save(ikey,ientry)
+                    size = 0
+                    del env
+                    gc.collect()
+                    l = [apk]
+    else:
+        l = []
+        with open("difficulty.csv", encoding="utf8") as f:
             line = f.readline()
-    index1 = l.index("Doppelganger.LeaF")
-    index2 = l.index("Poseidon.1112vsStar")
-    del l[index2:len(l) - update.getint("side_story")]
-    del l[index1:index2 - update.getint("other_song")]
-    del l[:index1 - update.getint("main_story")]
-    print(l)
-    with ZipFile(sys.argv[1]) as apk:
-        for key, entry in table:
-            if type(key) == int:
-                continue
-            elif key[:7] == "avatar.":
-                save_compress(key,table[entry][0])
-                continue
-            for id in l:
-                if key.startswith("Assets/Tracks/%s.0/" % id):
-                    save_compress(key[14:], table[entry][0])
-                    break
+            while line:
+                l.append(line.split(",", 2)[0])
+                line = f.readline()
+        index1 = l.index("Doppelganger.LeaF")
+        index2 = l.index("Poseidon.1112vsStar")
+        del l[index2:len(l) - update.getint("side_story")]
+        del l[index1:index2 - update.getint("other_song")]
+        del l[:index1 - update.getint("main_story")]
+        print(l)
+        env = Environment()
+        with ZipFile(sys.argv[1]) as apk:
+            for key, entry in table:
+                if key[:7] == "avatar.":
+                    env.load_file(apk.read("assets/aa/Android/%s" % entry), name=key)
+                    continue
+                for id in l:
+                    if key.startswith("%s.0/" % id):
+                        env.load_file(apk.read("assets/aa/Android/%s" % entry), name=key)
+                        break
+        for ikey, ientry in env.files.items():
+            save(ikey,ientry)
+queue_in.put(None)
+thread.join()
+print("%f秒" % round(time.time() - ti, 4))

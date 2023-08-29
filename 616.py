@@ -1,14 +1,23 @@
+import json
+import re
 from requests import Session
-import sys
 
 s = Session()
 
-# res = requests.get("https://616.sb/assets/DownloadPage-a78f0b44.js")
-# print(res.text)
+res = s.get("https://616.sb/assets/DownloadPage-a78f0b44.js")
+body = res.text
 
-versionString = sys.argv[1]
+index = body.index("Phigros")
 
-version = int(sys.argv[2])
+match = re.search('n:([^,]+)', body[index:])
+version = int(match.group(1))
+print(version)
+
+match = re.search('g:"([^"]+)', body[index:])
+versionString = match.group(1)
+print(versionString)
+
+
 
 res = s.get("https://load-balance.minasan.xyz/com.PigeonGames.Phigros/com.PigeonGames.Phigros_%s.apk" % versionString, stream=True)
 length = int(res.headers["Content-Length"]) / 1024 / 1024

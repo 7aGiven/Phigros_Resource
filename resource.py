@@ -187,6 +187,10 @@ with ThreadPoolExecutor(6) as pool:
                     del env
                     gc.collect()
                     l = [apk]
+            queue_in.put(l)
+            env = queue_out.get()
+            for ikey, ientry in env.files.items():
+                save(ikey,ientry)
     else:
         l = []
         with open("difficulty.csv", encoding="utf8") as f:

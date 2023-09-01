@@ -21,7 +21,7 @@ os.chdir(__file__[:-11])
 config = ConfigParser()
 config.read("config.ini", "utf8")
 types = config["TYPES"]
-type_list = ("avatar", "Chart_EZ", "Chart_HD", "Chart_IN", "Chart_AT", "illustrationBlur", "illustrationLowRes", "illustration", "music")
+type_list = ("avatar", "Chart_EZ", "Chart_HD", "Chart_IN", "Chart_AT", "IllustrationBlur", "IllustrationLowRes", "Illustration", "music")
 
 def getbool(t):
     if t[:6] == "Chart_":
@@ -140,17 +140,17 @@ def save(key, entry):
         queue_in.put(("avatar/%s.png" % key, bytesIO))
     elif types.getboolean("Chart") and key[-14:-7] == "/Chart_" and key[-5:] == ".json":
         queue_in.put(("Chart_%s/%s.json" % (key[-7:-5], key[:-14]), obj.script))
-    elif types.getboolean("illustrationBlur") and key[-23:] == ".0/IllustrationBlur.png":
+    elif types.getboolean("IllustrationBlur") and key[-23:] == ".0/IllustrationBlur.png":
         key = key[:-23]
         bytesIO = BytesIO()
         obj.image.save(bytesIO, "png")
-        queue_in.put(("illustrationBlur/%s.png" % key, bytesIO))
-    elif types.getboolean("illustrationLowRes") and key[-25:] == ".0/IllustrationLowRes.png":
+        queue_in.put(("IllustrationBlur/%s.png" % key, bytesIO))
+    elif types.getboolean("IllustrationLowRes") and key[-25:] == ".0/IllustrationLowRes.png":
         key = key[:-25]
-        pool.submit(save_image, "illustrationLowRes/%s.png" % key, obj.image)
-    elif types.getboolean("illustration") and key[-19:] == ".0/Illustration.png":
+        pool.submit(save_image, "IllustrationLowRes/%s.png" % key, obj.image)
+    elif types.getboolean("Illustration") and key[-19:] == ".0/Illustration.png":
         key = key[:-19]
-        pool.submit(save_image, "illustration/%s.png" % key, obj.image)
+        pool.submit(save_image, "Illustration/%s.png" % key, obj.image)
     elif types.getboolean("music") and key[-12:] == ".0/music.wav":
         key = key[:-12]
         pool.submit(save_music, "music/%s.wav" % key, obj)

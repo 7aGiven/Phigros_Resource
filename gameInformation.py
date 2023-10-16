@@ -56,82 +56,83 @@ class ByteReader:
             result.append(item)
         return result
 
+def run(path):
+    env = Environment()
+    with zipfile.ZipFile(path) as apk:
+        with apk.open("assets/bin/Data/globalgamemanagers.assets") as f:
+            env.load_file(f.read(), name="assets/bin/Data/globalgamemanagers.assets")
+        with apk.open("assets/bin/Data/level0") as f:
+            env.load_file(f.read())
+    for obj in env.objects:
+        if obj.type.name != "MonoBehaviour":
+            continue
+        data = obj.read()
+        if data.m_Script.get_obj().read().name == "GameInformation":
+            information = data.raw_data.tobytes()
+        elif data.m_Script.get_obj().read().name == "GetCollectionControl":
+            collection = data.raw_data.tobytes()
+        elif data.m_Script.get_obj().read().name == "TipsProvider":
+            tips = data.raw_data.tobytes()
 
 
-env = Environment()
-with zipfile.ZipFile(sys.argv[1]) as apk:
-    with apk.open("assets/bin/Data/globalgamemanagers.assets") as f:
-        env.load_file(f.read(), name="assets/bin/Data/globalgamemanagers.assets")
-    with apk.open("assets/bin/Data/level0") as f:
-        env.load_file(f.read())
-for obj in env.objects:
-    if obj.type.name != "MonoBehaviour":
-        continue
-    data = obj.read()
-    if data.m_Script.get_obj().read().name == "GameInformation":
-        information = data.raw_data.tobytes()
-    elif data.m_Script.get_obj().read().name == "GetCollectionControl":
-        collection = data.raw_data.tobytes()
-    elif data.m_Script.get_obj().read().name == "TipsProvider":
-        tips = data.raw_data.tobytes()
 
+    position = information.index(b"\x16\x00\x00\x00Glaciaxion.SunsetRay.0\x00\x00\n")
 
+    reader = ByteReader(information[position - 4:])
+    information_schema = {"songId": str, "songKey": str, "songName": str, "songTitle": str, "difficulty": [float], "illustrator": str, "charter": [str], "composer": str, "levels": [str], "previewTime": float, "unlockList": {"unlockType": int, "unlockInfo": [str]}, "n": [int]}
+    difficulty = []
+    table = []
+    for i in range(3):
+        for item in reader.readSchema(information_schema):
+            item["songId"] = item["songId"][:-2]
+            if len(item["levels"]) == 5:
+                item["difficulty"].pop()
+                item["charter"].pop()
+            if item["difficulty"][-1] == 0:
+                item["difficulty"].pop()
+                item["charter"].pop()
+            for i in range(len(item["difficulty"])):
+                item["difficulty"][i] = round(item["difficulty"][i], 1)
+            difficulty.append([item["songId"]] + item["difficulty"])
+            table.append((item["songId"], item["songName"], item["composer"], item["illustrator"], *item["charter"]))
 
-position = information.index(b"\x16\x00\x00\x00Glaciaxion.SunsetRay.0\x00\x00\n")
+    print(difficulty)
+    print(table)
 
-reader = ByteReader(information[position - 4:])
-information_schema = {"songId": str, "songKey": str, "songName": str, "songTitle": str, "difficulty": [float], "illustrator": str, "charter": [str], "composer": str, "levels": [str], "previewTime": float, "unlockList": {"unlockType": int, "unlockInfo": [str]}, "n": [int]}
-difficulty = []
-table = []
-for i in range(3):
-    for item in reader.readSchema(information_schema):
-        item["songId"] = item["songId"][:-2]
-        if len(item["levels"]) == 5:
-            item["difficulty"].pop()
-            item["charter"].pop()
-        if item["difficulty"][-1] == 0:
-            item["difficulty"].pop()
-            item["charter"].pop()
-        for i in range(len(item["difficulty"])):
-            item["difficulty"][i] = round(item["difficulty"][i], 1)
-        difficulty.append([item["songId"]] + item["difficulty"])
-        table.append((item["songId"], item["songName"], item["composer"], item["illustrator"], *item["charter"]))
+    with open("difficulty.csv", "w", encoding="utf8") as f:
+        for item in difficulty:
+            f.write(",".join(map(str, item)))
+            f.write("\n")
 
-print(difficulty)
-print(table)
+    with open("info.csv", "w", encoding="utf8") as f:
+        for item in table:
+            f.write("\\".join(item))
+            f.write("\n")
 
-with open("difficulty.csv", "w", encoding="utf8") as f:
-    for item in difficulty:
-        f.write(",".join(map(str, item)))
-        f.write("\n")
+    reader = ByteReader(collection)
+    collection_schema = {1: (int, int, int, str, str, str), "key": str, "index": int, 2: (int,), "title": str, 3: (str, str, str, str)}
 
-with open("info.csv", "w", encoding="utf8") as f:
-    for item in table:
-        f.write("\\".join(item))
-        f.write("\n")
+    with open("collection.csv", "w", encoding="utf8") as f:
+        for item in reader.readSchema(collection_schema):
+            if item["index"] == 1:
+                f.write("%s,%s\n" % (item["key"], item["title"]))
 
-reader = ByteReader(collection)
-collection_schema = {1: (int, int, int, str, str, str), "key": str, "index": int, 2: (int,), "title": str, 3: (str, str, str, str)}
+    avatar_schema = {1: (int, int, int, str, int, str), "id": str, "file": str}
+    table = reader.readSchema(avatar_schema)
 
-with open("collection.csv", "w", encoding="utf8") as f:
-    for item in reader.readSchema(collection_schema):
-        if item["index"] == 1:
-            f.write("%s,%s\n" % (item["key"], item["title"]))
+    with open("avatar.txt", "w", encoding="utf8") as f:
+        for item in table:
+            f.write(item["id"])
+            f.write("\n")
 
-avatar_schema = {1: (int, int, int, str, int, str), "id": str, "file": str}
-table = reader.readSchema(avatar_schema)
+    with open("avatar.csv", "w") as f:
+        for item in table:
+            f.write("%s,%s\n" % (item["id"], item["file"][7:]))
 
-with open("avatar.txt", "w", encoding="utf8") as f:
-    for item in table:
-        f.write(item["id"])
-        f.write("\n")
-
-with open("avatar.csv", "w") as f:
-    for item in table:
-        f.write("%s,%s\n" % (item["id"], item["file"][7:]))
-
-reader = ByteReader(tips[8:])
-with open("tips.txt", "w", encoding="utf8") as f:
-    for i in range(reader.readInt()):
-        f.write(reader.readString())
-        f.write("\n")
+    reader = ByteReader(tips[8:])
+    with open("tips.txt", "w", encoding="utf8") as f:
+        for i in range(reader.readInt()):
+            f.write(reader.readString())
+            f.write("\n")
+if __name__=="__main__":
+    run(sys.argv[1])

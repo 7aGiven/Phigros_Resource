@@ -3,18 +3,16 @@ from requests import Session
 
 s = Session()
 
-# res = s.get("https://616.sb")
-# match = re.search(b"index-[^.]+", res.content)
-# path = match.group().decode()
-# print(path)
-# # index-18c0edd0.js
+res = s.get("https://616.sb")
+match = re.search(b"index-[^.]+", res.content)
+path = match.group().decode()
+print(path)
 
-# res = s.get("https://616.sb/assets/%s.js" % body)
-# match = re.search(b"DownloadPage-[^.]+", res.content)
-# path = match.group().decode()
-# print(path)
+res = s.get("https://616.sb/assets/%s.js" % body)
+match = re.search(b"DownloadPage-[^.]+", res.content)
+path = match.group().decode()
+print(path)
 
-path = "DownloadPage-a78f0b44"
 res = s.get("https://616.sb/assets/%s.js" % path)
 body = res.text
 

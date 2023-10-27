@@ -112,10 +112,15 @@ def run(path):
     reader = ByteReader(collection)
     collection_schema = {1: (int, int, int, str, str, str), "key": str, "index": int, 2: (int,), "title": str, 3: (str, str, str, str)}
 
+    D = {}
+    for item in reader.readSchema(collection_schema):
+        if item["key"] in D:
+            D[item["key"]][1] = item["index"]
+        else:
+            D[item["key"]] = [item["title"], item["index"]]
     with open("collection.csv", "w", encoding="utf8") as f:
-        for item in reader.readSchema(collection_schema):
-            if item["index"] == 1:
-                f.write("%s,%s\n" % (item["key"], item["title"]))
+        for key, value in D.items():
+            f.write("%s,%s,%s\n" % (key, value[0], value[1]))
 
     avatar_schema = {1: (int, int, int, str, int, str), "id": str, "file": str}
     table = reader.readSchema(avatar_schema)

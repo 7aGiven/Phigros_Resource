@@ -76,9 +76,8 @@ def run(path):
 
 
 
-    position = information.index(b"\x16\x00\x00\x00Glaciaxion.SunsetRay.0\x00\x00\n")
-
-    reader = ByteReader(information[position - 4:])
+    reader = ByteReader(information)
+    reader.position = information.index(b"\x16\x00\x00\x00Glaciaxion.SunsetRay.0\x00\x00\n") - 4
     songBase_schema = {"songId": str, "songKey": str, "songName": str, "songTitle": str, "difficulty": [float], "illustrator": str, "charter": [str], "composer": str, "levels": [str], "previewTime": float, "unlockList": {"unlockType": int, "unlockInfo": [str]}, "levelMods": {"n": [str]}}
     difficulty = []
     table = []
@@ -95,6 +94,7 @@ def run(path):
                 item["difficulty"][i] = round(item["difficulty"][i], 1)
             difficulty.append([item["songId"]] + item["difficulty"])
             table.append((item["songId"], item["songName"], item["composer"], item["illustrator"], *item["charter"]))
+    reader.readSchema(songBase_schema)
 
     print(difficulty)
     print(table)
@@ -109,9 +109,23 @@ def run(path):
             f.write("\\".join(item))
             f.write("\n")
 
+    key_schema = {"key": str, "a": int, "type": int, "b": int}
+    single = []
+    illustration = []
+    for item in reader.readSchema(key_schema):
+        if item["type"] == 0:
+            single.append(item["key"])
+        elif item["type"] == 2 and item["key"] not in single:
+            illustration.append(item["key"])
+    with open("single.txt", "w", encoding="utf8") as f:
+        for item in single:
+            f.write("%s\n" % item)
+    with open("illustration.txt", "w", encoding="utf8") as f:
+        for item in illustration:
+            f.write("%s\n" % item)
+
     reader = ByteReader(collection)
     collection_schema = {1: (int, int, int, str, str, str), "key": str, "index": int, 2: (int,), "title": str, 3: (str, str, str, str)}
-
     D = {}
     for item in reader.readSchema(collection_schema):
         if item["key"] in D:
@@ -124,12 +138,10 @@ def run(path):
 
     avatar_schema = {1: (int, int, int, str, int, str), "id": str, "file": str}
     table = reader.readSchema(avatar_schema)
-
     with open("avatar.txt", "w", encoding="utf8") as f:
         for item in table:
             f.write(item["id"])
             f.write("\n")
-
     with open("avatar.csv", "w") as f:
         for item in table:
             f.write("%s,%s\n" % (item["id"], item["file"][7:]))
@@ -139,5 +151,6 @@ def run(path):
         for i in range(reader.readInt()):
             f.write(reader.readString())
             f.write("\n")
+            
 if __name__=="__main__":
     run(sys.argv[1])

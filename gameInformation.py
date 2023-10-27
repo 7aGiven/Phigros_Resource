@@ -79,11 +79,11 @@ def run(path):
     position = information.index(b"\x16\x00\x00\x00Glaciaxion.SunsetRay.0\x00\x00\n")
 
     reader = ByteReader(information[position - 4:])
-    information_schema = {"songId": str, "songKey": str, "songName": str, "songTitle": str, "difficulty": [float], "illustrator": str, "charter": [str], "composer": str, "levels": [str], "previewTime": float, "unlockList": {"unlockType": int, "unlockInfo": [str]}, "n": [int]}
+    songBase_schema = {"songId": str, "songKey": str, "songName": str, "songTitle": str, "difficulty": [float], "illustrator": str, "charter": [str], "composer": str, "levels": [str], "previewTime": float, "unlockList": {"unlockType": int, "unlockInfo": [str]}, "levelMods": {"n": [str]}}
     difficulty = []
     table = []
     for i in range(3):
-        for item in reader.readSchema(information_schema):
+        for item in reader.readSchema(songBase_schema):
             item["songId"] = item["songId"][:-2]
             if len(item["levels"]) == 5:
                 item["difficulty"].pop()

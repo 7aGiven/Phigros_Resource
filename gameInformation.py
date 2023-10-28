@@ -115,7 +115,7 @@ def run(path):
     for item in reader.readSchema(key_schema):
         if item["type"] == 0:
             single.append(item["key"])
-        elif item["type"] == 2 and item["key"] not in single:
+        elif item["type"] == 2 and item["key"] != "Introduction" and item["key"] not in single:
             illustration.append(item["key"])
     with open("single.txt", "w", encoding="utf8") as f:
         for item in single:

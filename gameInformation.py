@@ -5,9 +5,8 @@ from UnityPy import Environment
 import zipfile
 
 
-
 class ByteReader:
-    def __init__(self, data:bytes):
+    def __init__(self, data: bytes):
         self.data = data
         self.position = 0
         self.d = {int: self.readInt, float: self.readFloat, str: self.readString}
@@ -15,25 +14,25 @@ class ByteReader:
     def readInt(self):
         self.position += 4
         return self.data[self.position - 4] ^ self.data[self.position - 3] << 8
-    
+
     def readFloat(self):
         self.position += 4
         return struct.unpack("f", self.data[self.position - 4:self.position])[0]
 
     def readString(self):
         length = self.readInt()
-        result = self.data[self.position:self.position+length].decode()
+        result = self.data[self.position:self.position + length].decode()
         self.position += length // 4 * 4
         if length % 4 != 0:
             self.position += 4
         return result
-    
+
     def skipString(self):
         length = self.readInt()
         self.position += length // 4 * 4
         if length % 4 != 0:
             self.position += 4
-    
+
     def readSchema(self, schema: dict):
         result = []
         for x in range(self.readInt()):
@@ -56,6 +55,7 @@ class ByteReader:
             result.append(item)
         return result
 
+
 def run(path):
     env = Environment()
     with zipfile.ZipFile(path) as apk:
@@ -74,11 +74,11 @@ def run(path):
         elif data.m_Script.get_obj().read().name == "TipsProvider":
             tips = data.raw_data.tobytes()
 
-
-
     reader = ByteReader(information)
     reader.position = information.index(b"\x16\x00\x00\x00Glaciaxion.SunsetRay.0\x00\x00\n") - 4
-    songBase_schema = {"songId": str, "songKey": str, "songName": str, "songTitle": str, "difficulty": [float], "illustrator": str, "charter": [str], "composer": str, "levels": [str], "previewTime": float, "unlockList": {"unlockType": int, "unlockInfo": [str]}, "levelMods": {"n": [str]}}
+    songBase_schema = {"songId": str, "songKey": str, "songName": str, "songTitle": str, "difficulty": [float],
+                       "illustrator": str, "charter": [str], "composer": str, "levels": [str], "previewTime": float,
+                       "unlockList": {"unlockType": int, "unlockInfo": [str]}, "levelMods": {"n": [str]}}
     difficulty = []
     table = []
     for i in range(3):
@@ -125,7 +125,8 @@ def run(path):
             f.write("%s\n" % item)
 
     reader = ByteReader(collection)
-    collection_schema = {1: (int, int, int, str, str, str), "key": str, "index": int, 2: (int,), "title": str, 3: (str, str, str, str)}
+    collection_schema = {1: (int, int, int, str, str, str), "key": str, "index": int, 2: (int,), "title": str,
+                         3: (str, str, str, str)}
     D = {}
     for item in reader.readSchema(collection_schema):
         if item["key"] in D:
@@ -151,6 +152,7 @@ def run(path):
         for i in range(reader.readInt()):
             f.write(reader.readString())
             f.write("\n")
-            
-if __name__=="__main__":
+
+
+if __name__ == "__main__":
     run(sys.argv[1])

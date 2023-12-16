@@ -14,7 +14,7 @@
 
 定数表输出为difficulty.csv，收藏品输出为collection.csv，头像输出为avatar.txt，tips输出为tips.txt，其余输出为info.csv
 
-`resource.py`依赖difficulty.csv和avatar.csv，从apk内解压出头像、铺面、曲绘、音乐资源，为png，wav，json
+`resource.py`依赖difficulty.csv和avatar.csv，从apk内解压出头像、谱面、曲绘、音乐资源，为png，wav，json
 
 # 配置文件 config.ini
 ```ini

@@ -99,14 +99,14 @@ def run(path):
     print(difficulty)
     print(table)
 
-    with open("difficulty.csv", "w", encoding="utf8") as f:
+    with open("difficulty.tsv", "w", encoding="utf8") as f:
         for item in difficulty:
-            f.write(",".join(map(str, item)))
+            f.write("\t".join(map(str, item)))
             f.write("\n")
 
-    with open("info.csv", "w", encoding="utf8") as f:
+    with open("info.tsv", "w", encoding="utf8") as f:
         for item in table:
-            f.write("\\".join(item))
+            f.write("\t".join(item))
             f.write("\n")
 
     key_schema = {"key": str, "a": int, "type": int, "b": int}
@@ -117,6 +117,7 @@ def run(path):
             single.append(item["key"])
         elif item["type"] == 2 and item["key"] != "Introduction" and item["key"] not in single:
             illustration.append(item["key"])
+
     with open("single.txt", "w", encoding="utf8") as f:
         for item in single:
             f.write("%s\n" % item)
@@ -133,9 +134,9 @@ def run(path):
             D[item["key"]][1] = item["index"]
         else:
             D[item["key"]] = [item["title"], item["index"]]
-    with open("collection.csv", "w", encoding="utf8") as f:
+    with open("collection.tsv", "w", encoding="utf8") as f:
         for key, value in D.items():
-            f.write("%s,%s,%s\n" % (key, value[0], value[1]))
+            f.write("%s\t%s\t%s\n" % (key, value[0], value[1]))
 
     avatar_schema = {1: (int, int, int, str, int, str), "id": str, "file": str}
     table = reader.readSchema(avatar_schema)
@@ -143,9 +144,9 @@ def run(path):
         for item in table:
             f.write(item["id"])
             f.write("\n")
-    with open("avatar.csv", "w") as f:
+    with open("avatar.tsv", "w") as f:
         for item in table:
-            f.write("%s,%s\n" % (item["id"], item["file"][7:]))
+            f.write("%s\t%s\n" % (item["id"], item["file"][7:]))
 
     reader = ByteReader(tips[8:])
     with open("tips.txt", "w", encoding="utf8") as f:

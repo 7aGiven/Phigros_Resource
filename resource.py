@@ -168,7 +168,7 @@ def run(path, c):
     global avatar
     if config["avatar"]:
         avatar = {}
-        with open("run/avatar.csv") as f:
+        with open("tmp.tsv") as f:
             line = f.readline()[:-1]
             while line:
                 l = line.split(",")
@@ -205,7 +205,7 @@ def run(path, c):
                     save(ikey, ientry)
         else:
             l = []
-            with open("run/difficulty.csv", encoding="utf8") as f:
+            with open("difficulty.tsv", encoding="utf8") as f:
                 line = f.readline()
                 while line:
                     l.append(line.split(",", 2)[0])

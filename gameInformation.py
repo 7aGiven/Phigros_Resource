@@ -144,7 +144,7 @@ def run(path):
         for item in table:
             f.write(item["id"])
             f.write("\n")
-    with open("avatar.tsv", "w") as f:
+    with open("tmp.tsv", "w") as f:
         for item in table:
             f.write("%s\t%s\n" % (item["id"], item["file"][7:]))
 

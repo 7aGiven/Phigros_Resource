@@ -74,8 +74,6 @@ def save_music(path, music: AudioClip):
     t1 = time.time()
     fsb = FSB5(music.m_AudioData)
     rebuilt_sample = fsb.rebuild_sample(fsb.samples[0])
-    with open(path, 'wb') as fp:
-        fp.write(rebuilt_sample)
     queue_in.put((path, rebuilt_sample))
     print("%f秒" % round(time.time() - t1, 4))
 

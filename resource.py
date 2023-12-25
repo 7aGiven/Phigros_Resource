@@ -171,7 +171,7 @@ def run(path, c):
         with open("tmp.tsv") as f:
             line = f.readline()[:-1]
             while line:
-                l = line.split(",")
+                l = line.split("\t")
                 avatar[l[1]] = l[0]
                 line = f.readline()[:-1]
 
@@ -208,7 +208,7 @@ def run(path, c):
             with open("difficulty.tsv", encoding="utf8") as f:
                 line = f.readline()
                 while line:
-                    l.append(line.split(",", 2)[0])
+                    l.append(line.split("\t", 2)[0])
                     line = f.readline()
             index1 = l.index("Doppelganger.LeaF")
             index2 = l.index("Poseidon.1112vsStar")

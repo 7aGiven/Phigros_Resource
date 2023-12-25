@@ -12,9 +12,9 @@
 
 `gameInformation.py`可从apk获取定数表，tips，收藏品id，头像id，曲id，曲名，曲师，画师，谱师
 
-定数表输出为difficulty.csv，收藏品输出为collection.csv，头像输出为avatar.txt，tips输出为tips.txt，其余输出为info.csv
+定数表输出为difficulty.csv，收藏品输出为collection.tsv，头像输出为avatar.txt，tips输出为tips.txt，其余输出为info.tsv
 
-`resource.py`依赖difficulty.csv和avatar.csv，从apk内解压出头像、谱面、曲绘、音乐资源，为png，wav，json
+`resource.py`依赖difficulty.tsv和tmp.tsv，从apk内解压出头像、谱面、曲绘、音乐资源，为png，ogg，json
 
 # 配置文件 config.ini
 ```ini
@@ -41,7 +41,7 @@ TYPES section为设定你需要哪些种类的资源，见README.md开头
 # 使用示例
 taptap下载的apk
 ```shell
-pip3 install UnityPy
+pip3 install UnityPy,fsb5
 git clone --depth 1 https://github.com/7aGiven/PhigrosLibrary_Resource/
 cd PhigrosLibrary_Resource
 python3 gameInformation.py Phigros.apk
@@ -49,7 +49,7 @@ python3 resource.py Phigros.apk
 ```
 https://616.sb下载的apk和obb
 ```shell
-pip3 install UnityPy
+pip3 install UnityPy,fsb5
 git clone --depth 1 https://github.com/7aGiven/PhigrosLibrary_Resource/
 cd PhigrosLibrary_Resource
 python3 gameInformation.py Phigros.apk

@@ -8,6 +8,8 @@
 曲id，曲名，曲师，画师，谱师
 
 头像图片，谱面文件，曲子音乐文件，曲绘(模糊)，曲绘(低质量)，曲绘
+
+生成适配Phira的pez自制谱文件
 # 介绍
 
 `gameInformation.py`可从apk获取定数表，tips，收藏品id，头像id，曲id，曲名，曲师，画师，谱师
@@ -16,6 +18,7 @@
 
 `resource.py`依赖difficulty.tsv和tmp.tsv，从apk内解压出头像、谱面、曲绘、音乐资源，为png，ogg，json
 
+phira.py依赖info.tsv，difficulty.tsv，music/，IllustrationLowRes/, Chart*/，生成phira文件夹内的自制谱文件
 # 配置文件 config.ini
 ```ini
 [TYPES]
@@ -37,7 +40,7 @@ TYPES section为设定你需要哪些种类的资源，见README.md开头
 
 当UPDATE section全为0时，默认获取全部歌曲的资源
 
-当UPDATE section不是全为0时，会通过difficulty.csv获取最近的歌曲，当Phigros更新时使用，更新了哪个部分，更新了几首，运行resource.py时只会提取最近几首的资源
+当UPDATE section不是全为0时，会通过difficulty.tsv获取最近的歌曲，当Phigros更新时使用，更新了哪个部分，更新了几首，运行resource.py时只会提取最近几首的资源
 # 使用示例
 taptap下载的apk
 ```shell
@@ -55,3 +58,4 @@ cd PhigrosLibrary_Resource
 python3 gameInformation.py Phigros.apk
 python3 resource.py Phigros.obb
 ```
+生成自制谱文件`python3 phira.py`

@@ -1,3 +1,4 @@
+# 本仓库自Phigros 3.5.0后失效
 # Phigros_Resource
 本项目可从Phigros的apk文件获取资源
 

@@ -46,7 +46,7 @@ TYPES section为设定你需要哪些种类的资源，见README.md开头
 ## 准备环境
 ```shell
 pkg install libjpeg-turbo //非Termux不需要这个
-pip install UnityPy // 若安装失败，切换为UnityPy~=1.10.0
+pip install UnityPy // 若安装失败，切换为UnityPy~=1.10.18
 pip install fsb5    //解压音频才需要，默认提取全部资源
 ```
 ## 开始提取

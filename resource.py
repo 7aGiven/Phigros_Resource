@@ -16,7 +16,6 @@ from UnityPy.classes import AudioClip
 from UnityPy.enums import ClassIDType
 from zipfile import ZipFile
 
-from fsb5 import FSB5
 
 
 class ByteReader:
@@ -114,6 +113,8 @@ def save(key, entry):
 def run(path, c):
     global config
     config = c
+    if config["music"]:
+        from fsb5 import FSB5
     with ZipFile(path) as apk:
         with apk.open("assets/aa/catalog.json") as f:
             data = json.load(f)
@@ -167,7 +168,7 @@ def run(path, c):
     global avatar
     if config["avatar"]:
         avatar = {}
-        with open("tmp.tsv") as f:
+        with open("tmp.tsv",encoding="utf8") as f:
             line = f.readline()[:-1]
             while line:
                 l = line.split("\t")

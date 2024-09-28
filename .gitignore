@@ -1,8 +1,8 @@
-!/requirements.txt
 *.apk
 *.obb
 *.csv
 *.txt
+!/requirements.txt
 avatar/
 Chart_EZ/
 Chart_HD/

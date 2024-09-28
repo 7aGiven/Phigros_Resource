@@ -43,7 +43,7 @@ TYPES section为设定你需要哪些种类的资源，见README.md开头
 
 当UPDATE section不是全为0时，会通过difficulty.tsv获取最近的歌曲，当Phigros更新时使用，更新了哪个部分，更新了几首，运行resource.py时只会提取最近几首的资源
 # 使用示例
-taptap下载的apk
+taptap下载的apk(使用Termux可且安装Taptap版Phigros可自动定位apk，无需输入apk路径)
 ```shell
 pip3 install UnityPy,fsb5
 git clone --depth 1 https://github.com/7aGiven/PhigrosLibrary_Resource/

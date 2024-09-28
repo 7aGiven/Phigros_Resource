@@ -7,6 +7,7 @@ import json
 import os
 from queue import Queue
 import shutil
+import subprocess
 import sys
 import threading
 import time
@@ -233,10 +234,15 @@ def run(path, c):
 
 
 if __name__ == "__main__":
+    if len(sys.argv) == 1 and os.path.isdir("/data/"):
+        r = subprocess.run("pm path com.PigeonGames.Phigros",stdin=subprocess.DEVNULL,stdout=subprocess.PIPE,stderr=subprocess.DEVNULL,shell=True)
+        path = r.stdout[8:-1]
+    else:
+        path = sys.argv[1]
     c = ConfigParser()
     c.read("config.ini", "utf8")
     types = c["TYPES"]
-    run(sys.argv[1], {
+    run(path, {
         "avatar": types.getboolean("avatar"),
         "Chart": types.getboolean("Chart"),
         "IllustrationBlur": types.getboolean("illustrationBlur"),

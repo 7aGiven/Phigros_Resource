@@ -1,5 +1,7 @@
 import json
+import os
 import struct
+import subprocess
 import sys
 from UnityPy import Environment
 import zipfile
@@ -175,4 +177,9 @@ def run(path):
 
 
 if __name__ == "__main__":
-    run(sys.argv[1])
+    if len(sys.argv) == 1 and os.path.isdir("/data/"):
+        r = subprocess.run("pm path com.PigeonGames.Phigros",stdin=subprocess.DEVNULL,stdout=subprocess.PIPE,stderr=subprocess.DEVNULL,shell=True)
+        path = r.stdout[8:-1]
+    else:
+        path = sys.argv[1]
+    run(path)

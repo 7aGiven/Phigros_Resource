@@ -52,14 +52,14 @@ pip install fsb5    //解压音频才需要，默认提取全部资源
 ## 开始提取
 taptap下载的apk(使用Termux可且安装Taptap版Phigros可自动定位apk，无需输入apk路径)
 ```shell
-git clone --depth 1 https://github.com/7aGiven/PhigrosLibrary_Resource/
+git clone --depth 1 https://github.com/7aGiven/Phigros_Resource/
 cd PhigrosLibrary_Resource
 python3 gameInformation.py Phigros.apk
 python3 resource.py Phigros.apk
 ```
 Google Play下载的apk和obb
 ```shell
-git clone --depth 1 https://github.com/7aGiven/PhigrosLibrary_Resource/
+git clone --depth 1 https://github.com/7aGiven/Phigros_Resource/
 cd PhigrosLibrary_Resource
 python3 gameInformation.py Phigros.apk
 python3 resource.py Phigros.obb

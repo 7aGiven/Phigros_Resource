@@ -113,8 +113,6 @@ def save(key, entry):
 def run(path, c):
     global config
     config = c
-    if config["music"]:
-        from fsb5 import FSB5
     with ZipFile(path) as apk:
         with apk.open("assets/aa/catalog.json") as f:
             data = json.load(f)
@@ -243,13 +241,16 @@ if __name__ == "__main__":
     c = ConfigParser()
     c.read("config.ini", "utf8")
     types = c["TYPES"]
+    music = types.getboolean("music")
+    if music:
+        from fsb5 import FSB5
     run(path, {
         "avatar": types.getboolean("avatar"),
         "Chart": types.getboolean("Chart"),
         "IllustrationBlur": types.getboolean("illustrationBlur"),
         "IllustrationLowRes": types.getboolean("illustrationLowRes"),
         "Illustration": types.getboolean("illustration"),
-        "music": types.getboolean("music"),
+        "music": music,
         "UPDATE": {
             "main_story": c["UPDATE"].getint("main_story"),
             "side_story": c["UPDATE"].getint("side_story"),

@@ -47,21 +47,21 @@ TYPES section为设定你需要哪些种类的资源，见README.md开头
 ```shell
 pkg install libjpeg-turbo //非Termux不需要这个
 pip install UnityPy==1.10.18
-pip install fsb5    //解压音频才需要，默认提取全部资源
+pip install fsb5   //解压音频才需要，默认提取全部资源
 ```
 ## 开始提取
 ### Taptap下载的apk
-1. 使用Termux可且安装Taptap版Phigros可自动定位apk，无需输入apk路径
+1. 使用Termux并安装Taptap版Phigros可自动定位apk，无需输入apk路径
 2. 可以运行`python taptap.py`来获取Taptap版Phigros下载链接
 ```shell
-git clone --depth 1 https://github.com/7aGiven/Phigros_Resource/
+git clone --depth 1 https://github.com/7aGiven/Phigros_Resource
 cd PhigrosLibrary_Resource
 python gameInformation.py Phigros.apk
 python resource.py Phigros.apk
 ```
 ### Google Play下载的apk和obb
 ```shell
-git clone --depth 1 https://github.com/7aGiven/Phigros_Resource/
+git clone --depth 1 https://github.com/7aGiven/Phigros_Resource
 cd PhigrosLibrary_Resource
 python gameInformation.py Phigros.apk
 python resource.py Phigros.obb

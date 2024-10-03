@@ -7,7 +7,6 @@ import json
 import os
 from queue import Queue
 import shutil
-import subprocess
 import sys
 import threading
 import time
@@ -234,6 +233,7 @@ def run(path, c):
 
 if __name__ == "__main__":
     if len(sys.argv) == 1 and os.path.isdir("/data/"):
+        import subprocess
         r = subprocess.run("pm path com.PigeonGames.Phigros",stdin=subprocess.DEVNULL,stdout=subprocess.PIPE,stderr=subprocess.DEVNULL,shell=True)
         path = r.stdout[8:-1].decode()
     else:

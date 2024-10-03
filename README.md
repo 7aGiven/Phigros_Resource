@@ -55,14 +55,14 @@ pip install fsb5   //解压音频才需要，默认提取全部资源
 2. 可以运行`python taptap.py`来获取Taptap版Phigros下载链接
 ```shell
 git clone --depth 1 https://github.com/7aGiven/Phigros_Resource
-cd PhigrosLibrary_Resource
+cd Phigros_Resource
 python gameInformation.py Phigros.apk
 python resource.py Phigros.apk
 ```
 ### Google Play下载的apk和obb
 ```shell
 git clone --depth 1 https://github.com/7aGiven/Phigros_Resource
-cd PhigrosLibrary_Resource
+cd Phigros_Resource
 python gameInformation.py Phigros.apk
 python resource.py Phigros.obb
 ```

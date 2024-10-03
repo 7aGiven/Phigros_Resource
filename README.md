@@ -15,7 +15,7 @@
 
 `gameInformation.py`可从apk获取定数表，tips，收藏品id，头像id，曲id，曲名，曲师，画师，谱师
 
-定数表输出为difficulty.csv，收藏品输出为collection.tsv，头像输出为avatar.txt，tips输出为tips.txt，其余输出为info.tsv
+定数表输出为difficulty.tsv，收藏品输出为collection.tsv，头像输出为avatar.txt，tips输出为tips.txt，其余输出为info.tsv
 
 `resource.py`依赖difficulty.tsv和tmp.tsv，从apk内解压出头像、谱面、曲绘、音乐资源，为png，ogg，json
 

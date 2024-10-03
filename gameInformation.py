@@ -6,8 +6,6 @@ import zipfile
 
 import h
 
-DEBUG = False
-
 class ByteReader:
     def __init__(self, data: bytes):
         self.data = data
@@ -37,7 +35,7 @@ class ByteReader:
     def readClass(self, clazz):
         obj = clazz()
         for key, t in clazz.__annotations__.items():
-            if DEBUG:
+            if not __debug__:
                 print(key, t)
             if type(t) == type:
                 setattr(obj, key, self.d[t]())
@@ -50,7 +48,7 @@ class ByteReader:
                     else:
                         l.append(self.readClass(t))
                 setattr(obj, key, l)
-            if DEBUG:
+            if not __debug__:
                 print(key, getattr(obj, key))
         return obj
 
@@ -73,7 +71,7 @@ def run(path):
             collection = data.raw_data.tobytes()
         elif data.m_Script.get_obj().read().name == "TipsProvider":
             tips = data.raw_data.tobytes()
-    if DEBUG:
+    if not __debug__:
         with open("GameInformation", "wb") as f:
             f.write(information)
         with open("GetCollectionControl", "wb") as f:

@@ -43,12 +43,6 @@ def io():
         item = queue_in.get()
         if item == None:
             break
-        elif type(item) == list:
-            env = Environment()
-            for i in range(1, len(item)):
-                env.load_file(item[0].read("assets/aa/Android/%s" % item[i][1]), name=item[i][0])
-            queue_out.put(env)
-            del env
         else:
             path, resource = item
             print(path)
@@ -114,7 +108,6 @@ def run(path):
         with apk.open("assets/aa/catalog.json") as f:
             data = json.load(f)
 
-
     key = base64.b64decode(data["m_KeyDataString"])
     bucket = base64.b64decode(data["m_BucketDataString"])
     entry = base64.b64decode(data["m_EntryDataString"])
@@ -172,26 +165,11 @@ def run(path):
     with ThreadPoolExecutor(6) as pool:
         if update["main_story"] == 0 and update["other_song"] == 0 and update["side_story"] == 0:
             with ZipFile(path) as apk:
-                size = 0
-                l = [apk]
                 for key, entry in table:
-                    l.append((key, entry))
-                    info = apk.getinfo("assets/aa/Android/%s" % entry)
-                    size += info.file_size
-                    print(size)
-                    if size > 32 * 1024 * 1024:
-                        queue_in.put(l)
-                        env = queue_out.get()
-                        for ikey, ientry in env.files.items():
-                            save(ikey, ientry)
-                        size = 0
-                        del env
-                        gc.collect()
-                        l = [apk]
-                queue_in.put(l)
-                env = queue_out.get()
-                for ikey, ientry in env.files.items():
-                    save(ikey, ientry)
+                    env = Environment()
+                    env.load_file(apk.read("assets/aa/Android/%s" % entry), name=key)
+                    for ikey, ientry in env.files.items():
+                        save(ikey, ientry)
         else:
             l = []
             with open("difficulty.tsv", encoding="utf8") as f:
@@ -224,8 +202,6 @@ def run(path):
 
 
 if __name__ == "__main__":
-    if os.path.isdir("/data/"):
-        if !os.getcwd().startswith("/data")
     if len(sys.argv) == 1 and os.path.isdir("/data/"):
         import subprocess
         r = subprocess.run("pm path com.PigeonGames.Phigros",stdin=subprocess.DEVNULL,stdout=subprocess.PIPE,stderr=subprocess.DEVNULL,shell=True)
@@ -254,7 +230,7 @@ if __name__ == "__main__":
     for directory in filter(lambda x: getbool(x), type_list):
         shutil.rmtree(directory, True)
         os.mkdir(directory)
-        if os.path.isdir("/data/") and !os.getcwd().startswith("/data/"):
+        if os.path.isdir("/data/") and not os.getcwd().startswith("/data/"):
             with open(directory + "/.nomedia", "wb"):
                 pass
     run(path)

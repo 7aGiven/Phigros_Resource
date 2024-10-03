@@ -109,19 +109,11 @@ def save(key, entry):
         # save_music(f"music/{key}.wav", obj)
 
 
-def run(path, c):
-    global config
-    config = c
+def run(path):
     with ZipFile(path) as apk:
         with apk.open("assets/aa/catalog.json") as f:
             data = json.load(f)
 
-    type_list = (
-    "avatar", "Chart_EZ", "Chart_HD", "Chart_IN", "Chart_AT", "IllustrationBlur", "IllustrationLowRes", "Illustration",
-    "music")
-    for directory in filter(lambda x: getbool(x), type_list):
-        shutil.rmtree(directory, True)
-        os.mkdir(directory)
 
     key = base64.b64decode(data["m_KeyDataString"])
     bucket = base64.b64decode(data["m_BucketDataString"])
@@ -232,6 +224,8 @@ def run(path, c):
 
 
 if __name__ == "__main__":
+    if os.path.isdir("/data/"):
+        if !os.getcwd().startswith("/data")
     if len(sys.argv) == 1 and os.path.isdir("/data/"):
         import subprocess
         r = subprocess.run("pm path com.PigeonGames.Phigros",stdin=subprocess.DEVNULL,stdout=subprocess.PIPE,stderr=subprocess.DEVNULL,shell=True)
@@ -241,19 +235,26 @@ if __name__ == "__main__":
     c = ConfigParser()
     c.read("config.ini", "utf8")
     types = c["TYPES"]
-    music = types.getboolean("music")
-    if music:
-        from fsb5 import FSB5
-    run(path, {
+    config = {
         "avatar": types.getboolean("avatar"),
         "Chart": types.getboolean("Chart"),
         "IllustrationBlur": types.getboolean("illustrationBlur"),
         "IllustrationLowRes": types.getboolean("illustrationLowRes"),
         "Illustration": types.getboolean("illustration"),
-        "music": music,
+        "music": types.getboolean("music"),
         "UPDATE": {
             "main_story": c["UPDATE"].getint("main_story"),
             "side_story": c["UPDATE"].getint("side_story"),
             "other_song": c["UPDATE"].getint("other_song")
         }
-    })
+    }
+    if config["music"]:
+        from fsb5 import FSB5
+    type_list = ("avatar", "Chart_EZ", "Chart_HD", "Chart_IN", "Chart_AT", "IllustrationBlur", "IllustrationLowRes", "Illustration", "music")
+    for directory in filter(lambda x: getbool(x), type_list):
+        shutil.rmtree(directory, True)
+        os.mkdir(directory)
+        if os.path.isdir("/data/") and !os.getcwd().startswith("/data/"):
+            with open(directory + "/.nomedia", "wb"):
+                pass
+    run(path)

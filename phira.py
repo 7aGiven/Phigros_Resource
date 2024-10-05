@@ -28,7 +28,11 @@ for id, info in infos.items():
     print(info["Name"], info["Composer"])
     for level in range(len(info["difficulty"])):
         with ZipFile("phira/%s/%s-%s.pez" % (levels[level], id, levels[level]), "x") as pez:
-            pez.writestr("info.txt", "#\nName: %s\nSong: %s.ogg\nPicture: %s.png\nChart: %s.json\nLevel: %s Lv.%s\nComposer: %s\nIllustrator: %s\nCharter: %s" % (info["Name"], id, id, id, levels[level], info["difficulty"][level], info["Composer"], info["Illustrator"], info["Chater"][level]))
-            pez.write("Chart_%s/%s.0.json" % (levels[level], id), "%s.json" % id)
-            pez.write("IllustrationLowRes/%s.png" % id, "%s.png" % id)
-            pez.write("music/%s.ogg" % id, "%s.ogg" % id)
+            try:
+                print("Chart_%s/%s.json" % (levels[level], id), "%s.json" % id,"IllustrationLowRes/%s.png" % id, "%s.png" % id,"music/%s.ogg" % id, "%s.ogg" % id)
+                pez.writestr("info.txt", "#\nName: %s\nSong: %s.ogg\nPicture: %s.png\nChart: %s.json\nLevel: %s Lv.%s\nComposer: %s\nIllustrator: %s\nCharter: %s" % (info["Name"], id, id, id, levels[level], info["difficulty"][level], info["Composer"], info["Illustrator"], info["Chater"][level]))
+                pez.write("Chart_%s/%s.json" % (levels[level], id), "%s.json" % id)
+                pez.write("IllustrationLowRes/%s.png" % id[:-2], "%s.png" % id[:-2])
+                pez.write("music/%s.ogg" % id[:-2], "%s.ogg" % id[:-2])
+            except FileNotFoundError:
+                continue

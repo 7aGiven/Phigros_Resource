@@ -33,7 +33,7 @@ queue_in = Queue()
 
 def getbool(t):
     if t[:6] == "Chart_":
-        return config["Chart"]
+        return config["chart"]
     else:
         return config[t]
 
@@ -84,17 +84,17 @@ def save(key, entry):
         bytesIO = BytesIO()
         obj.image.save(bytesIO, "png")
         queue_in.put(("avatar/%s.png" % key, bytesIO))
-    elif config["Chart"] and key[-14:-7] == "/Chart_" and key[-5:] == ".json":
+    elif config["chart"] and key[-14:-7] == "/Chart_" and key[-5:] == ".json":
         queue_in.put(("Chart_%s/%s.json" % (key[-7:-5], key[:-14]), obj.script))
-    elif config["IllustrationBlur"] and key[-23:] == ".0/IllustrationBlur.png":
+    elif config["illustrationblur"] and key[-23:] == ".0/IllustrationBlur.png":
         key = key[:-23]
         bytesIO = BytesIO()
         obj.image.save(bytesIO, "png")
         queue_in.put(("IllustrationBlur/%s.png" % key, bytesIO))
-    elif config["IllustrationLowRes"] and key[-25:] == ".0/IllustrationLowRes.png":
+    elif config["illustrationlowres"] and key[-25:] == ".0/IllustrationLowRes.png":
         key = key[:-25]
         pool.submit(save_image, "IllustrationLowRes/%s.png" % key, obj.image)
-    elif config["Illustration"] and key[-19:] == ".0/Illustration.png":
+    elif config["illustration"] and key[-19:] == ".0/Illustration.png":
         key = key[:-19]
         pool.submit(save_image, "Illustration/%s.png" % key, obj.image)
     elif config["music"] and key[-12:] == ".0/music.wav":
@@ -213,10 +213,10 @@ if __name__ == "__main__":
     types = c["TYPES"]
     config = {
         "avatar": types.getboolean("avatar"),
-        "Chart": types.getboolean("Chart"),
-        "IllustrationBlur": types.getboolean("illustrationBlur"),
-        "IllustrationLowRes": types.getboolean("illustrationLowRes"),
-        "Illustration": types.getboolean("illustration"),
+        "chart": types.getboolean("Chart"),
+        "illustrationblur": types.getboolean("illustrationBlur"),
+        "illustrationlowres": types.getboolean("illustrationLowRes"),
+        "illustration": types.getboolean("illustration"),
         "music": types.getboolean("music"),
         "UPDATE": {
             "main_story": c["UPDATE"].getint("main_story"),
@@ -226,7 +226,7 @@ if __name__ == "__main__":
     }
     if config["music"]:
         from fsb5 import FSB5
-    type_list = ("avatar", "Chart_EZ", "Chart_HD", "Chart_IN", "Chart_AT", "IllustrationBlur", "IllustrationLowRes", "Illustration", "music")
+    type_list = ("avatar", "Chart_EZ", "Chart_HD", "Chart_IN", "Chart_AT", "illustrationblur", "illustrationlowres", "illustration", "music")
     for directory in filter(lambda x: getbool(x), type_list):
         shutil.rmtree(directory, True)
         os.mkdir(directory)

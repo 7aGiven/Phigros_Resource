@@ -24,9 +24,9 @@ phira.py依赖info.tsv，difficulty.tsv，music/，IllustrationLowRes/, Chart*/�
 ```ini
 [TYPES]
 avatar = true
-Chart = true
-illustrationBlur = true
-illustrationLowRes = true
+chart = true
+illustrationblur = true
+illustrationlowres = true
 illustration = true
 music = true
 [UPDATE]
@@ -48,9 +48,21 @@ TYPES section为设定你需要哪些种类的资源，见README.md开头
 pkg install libjpeg-turbo //非Termux不需要这个
 pip install UnityPy==1.10.18
 pip install fsb5   //解压音频才需要，默认提取全部资源
+pip install pyqt5
+pip install pyqt5-tool
+```
+也可：
+```
+pkg install libjpeg-turbo //非Termux不需要这个
+pip install requirements.txt
 ```
 ## 开始提取
 ### Taptap下载的apk
+使用GUI:
+```
+python gui.py
+```
+使用命令行：
 1. 使用Termux并安装Taptap版Phigros可自动定位apk，无需输入apk路径
 2. 可以运行`python taptap.py`来获取Taptap版Phigros下载链接
 ```shell
@@ -66,5 +78,5 @@ cd Phigros_Resource
 python gameInformation.py Phigros.apk
 python resource.py Phigros.obb
 ```
-## 生成自制谱文件
+## 生成自制谱文件s
 `python phira.py`

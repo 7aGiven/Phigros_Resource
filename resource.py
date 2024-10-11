@@ -31,13 +31,6 @@ queue_out = Queue()
 queue_in = Queue()
 
 
-def getbool(t):
-    if t[:6] == "Chart_":
-        return config["Chart"]
-    else:
-        return config[t]
-
-
 def io():
     while True:
         item = queue_in.get()
@@ -57,18 +50,14 @@ def io():
 
 def save_image(path, image):
     bytesIO = BytesIO()
-    t1 = time.time()
     image.save(bytesIO, "png")
-    print("%f秒" % round(time.time() - t1, 4))
     queue_in.put((path, bytesIO))
 
 
 def save_music(path, music: AudioClip):
-    t1 = time.time()
     fsb = FSB5(music.m_AudioData)
     rebuilt_sample = fsb.rebuild_sample(fsb.samples[0])
     queue_in.put((path, rebuilt_sample))
-    print("%f秒" % round(time.time() - t1, 4))
 
 
 classes = ClassIDType.TextAsset, ClassIDType.Sprite, ClassIDType.AudioClip
@@ -84,19 +73,23 @@ def save(key, entry):
         bytesIO = BytesIO()
         obj.image.save(bytesIO, "png")
         queue_in.put(("avatar/%s.png" % key, bytesIO))
-    elif config["Chart"] and key[-14:-7] == "/Chart_" and key[-5:] == ".json":
-        queue_in.put(("Chart_%s/%s.json" % (key[-7:-5], key[:-14]), obj.script))
-    elif config["IllustrationBlur"] and key[-23:] == ".0/IllustrationBlur.png":
+    elif config["chart"] and key[-14:-7] == "/Chart_" and key[-5:] == ".json":
+        print(key)
+        p = "chart/" + key[:-14]
+        if not os.path.exists(p):
+        	os.mkdir(p)
+        queue_in.put(("chart/%s/%s.json" % (key[:-14], key[-7:-5]), obj.script))
+    elif config["illustrationBlur"] and key[-23:] == ".0/IllustrationBlur.png":
         key = key[:-23]
         bytesIO = BytesIO()
         obj.image.save(bytesIO, "png")
-        queue_in.put(("IllustrationBlur/%s.png" % key, bytesIO))
-    elif config["IllustrationLowRes"] and key[-25:] == ".0/IllustrationLowRes.png":
+        queue_in.put(("illustrationBlur/%s.png" % key, bytesIO))
+    elif config["illustrationLowRes"] and key[-25:] == ".0/IllustrationLowRes.png":
         key = key[:-25]
-        pool.submit(save_image, "IllustrationLowRes/%s.png" % key, obj.image)
-    elif config["Illustration"] and key[-19:] == ".0/Illustration.png":
+        pool.submit(save_image, "illustrationLowRes/%s.png" % key, obj.image)
+    elif config["illustration"] and key[-19:] == ".0/Illustration.png":
         key = key[:-19]
-        pool.submit(save_image, "Illustration/%s.png" % key, obj.image)
+        pool.submit(save_image, "illustration/%s.png" % key, obj.image)
     elif config["music"] and key[-12:] == ".0/music.wav":
         key = key[:-12]
         pool.submit(save_music, "music/%s.ogg" % key, obj)
@@ -213,10 +206,10 @@ if __name__ == "__main__":
     types = c["TYPES"]
     config = {
         "avatar": types.getboolean("avatar"),
-        "Chart": types.getboolean("Chart"),
-        "IllustrationBlur": types.getboolean("illustrationBlur"),
-        "IllustrationLowRes": types.getboolean("illustrationLowRes"),
-        "Illustration": types.getboolean("illustration"),
+        "chart": types.getboolean("Chart"),
+        "illustrationBlur": types.getboolean("IllustrationBlur"),
+        "illustrationLowRes": types.getboolean("IllustrationLowRes"),
+        "illustration": types.getboolean("Illustration"),
         "music": types.getboolean("music"),
         "UPDATE": {
             "main_story": c["UPDATE"].getint("main_story"),
@@ -226,8 +219,10 @@ if __name__ == "__main__":
     }
     if config["music"]:
         from fsb5 import FSB5
-    type_list = ("avatar", "Chart_EZ", "Chart_HD", "Chart_IN", "Chart_AT", "IllustrationBlur", "IllustrationLowRes", "Illustration", "music")
-    for directory in filter(lambda x: getbool(x), type_list):
+    type_list = ("avatar", "chart", "illustrationBlur", "illustrationLowRes", "illustration", "music")
+    for directory in type_list:
+        if not config[directory]:
+    	    continue
         shutil.rmtree(directory, True)
         os.mkdir(directory)
         if os.path.isdir("/data/") and not os.getcwd().startswith("/data/"):

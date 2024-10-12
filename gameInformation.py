@@ -38,7 +38,10 @@ class ByteReader:
             if not __debug__:
                 print(key, t)
             if type(t) == type:
-                setattr(obj, key, self.d[t]())
+                if t in (bool, int, float, str):
+                    setattr(obj, key, self.d[t]())
+                else:
+                    setattr(obj, key, self.readClass(t))
             else:
                 l = []
                 t = t.__args__[0]
@@ -138,7 +141,7 @@ def run(path):
         if item.key in D:
             D[item.key][1] = item.subIndex
         else:
-            D[item.key] = [item.chinese, item.subIndex]
+            D[item.key] = [item.multiLanguageTitle.chinese, item.subIndex]
 
     with open("collection.tsv", "w", encoding="utf8") as f:
         for key, value in D.items():

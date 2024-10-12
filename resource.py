@@ -223,8 +223,8 @@ if __name__ == "__main__":
     for directory in type_list:
         if not config[directory]:
     	    continue
-        shutil.rmtree(directory, True)
-        os.mkdir(directory)
+        if not os.path.isdir(directory):
+            os.mkdir(directory)
         if os.path.isdir("/data/") and not os.getcwd().startswith("/data/"):
             with open(directory + "/.nomedia", "wb"):
                 pass

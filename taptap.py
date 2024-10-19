@@ -9,7 +9,7 @@ import uuid
 
 sample = string.ascii_lowercase + string.digits
 
-def taptap(apkid):
+def taptap(appid):
     uid = uuid.uuid4()
     X_UA = "V=1&PN=TapTap&VN_CODE=206012000&LOC=CN&LANG=zh_CN&CH=default&UID=%s" % uid
     

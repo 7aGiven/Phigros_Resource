@@ -88,7 +88,7 @@ def run(path):
     for i in range(3):
         for ii in range(reader.readInt()):
             songItem = reader.readClass(h.SongsItem)
-            songItem.songId = songItem.songId[:-2]
+            songItem.songsId = songItem.songsId[:-2]
             if len(songItem.difficulty) == 5:
                 songItem.difficulty.pop()
                 songItem.charter.pop()

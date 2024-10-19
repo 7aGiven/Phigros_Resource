@@ -225,7 +225,7 @@ if __name__ == "__main__":
     	    continue
         if not os.path.isdir(directory):
             os.mkdir(directory)
-        if os.path.isdir("/data/") and not os.getcwd().startswith("/data/"):
+        if os.path.isdir("/system/") and not os.getcwd().startswith("/data/"):
             with open(directory + "/.nomedia", "wb"):
                 pass
     run(path)

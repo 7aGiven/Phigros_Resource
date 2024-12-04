@@ -31,11 +31,13 @@ queue_out = Queue()
 queue_in = Queue()
 
 
+
 def getbool(t):
     if t[:6] == "Chart_":
         return config["chart"]
     else:
         return config[t]
+
 
 
 def io():
@@ -57,18 +59,14 @@ def io():
 
 def save_image(path, image):
     bytesIO = BytesIO()
-    t1 = time.time()
     image.save(bytesIO, "png")
-    print("%f秒" % round(time.time() - t1, 4))
     queue_in.put((path, bytesIO))
 
 
 def save_music(path, music: AudioClip):
-    t1 = time.time()
     fsb = FSB5(music.m_AudioData)
     rebuilt_sample = fsb.rebuild_sample(fsb.samples[0])
     queue_in.put((path, rebuilt_sample))
-    print("%f秒" % round(time.time() - t1, 4))
 
 
 classes = ClassIDType.TextAsset, ClassIDType.Sprite, ClassIDType.AudioClip
@@ -85,6 +83,7 @@ def save(key, entry):
         obj.image.save(bytesIO, "png")
         queue_in.put(("avatar/%s.png" % key, bytesIO))
     elif config["chart"] and key[-14:-7] == "/Chart_" and key[-5:] == ".json":
+
         queue_in.put(("Chart_%s/%s.json" % (key[-7:-5], key[:-14]), obj.script))
     elif config["illustrationblur"] and key[-23:] == ".0/IllustrationBlur.png":
         key = key[:-23]
@@ -96,7 +95,7 @@ def save(key, entry):
         pool.submit(save_image, "IllustrationLowRes/%s.png" % key, obj.image)
     elif config["illustration"] and key[-19:] == ".0/Illustration.png":
         key = key[:-19]
-        pool.submit(save_image, "Illustration/%s.png" % key, obj.image)
+        pool.submit(save_image, "illustration/%s.png" % key, obj.image)
     elif config["music"] and key[-12:] == ".0/music.wav":
         key = key[:-12]
         pool.submit(save_music, "music/%s.ogg" % key, obj)
@@ -150,7 +149,7 @@ def run(path):
     global avatar
     if config["avatar"]:
         avatar = {}
-        with open("tmp.tsv",encoding="utf8") as f:
+        with open("info/tmp.tsv",encoding="utf8") as f:
             line = f.readline()[:-1]
             while line:
                 l = line.split("\t")
@@ -214,9 +213,11 @@ if __name__ == "__main__":
     config = {
         "avatar": types.getboolean("avatar"),
         "chart": types.getboolean("Chart"),
+
         "illustrationblur": types.getboolean("illustrationBlur"),
         "illustrationlowres": types.getboolean("illustrationLowRes"),
         "illustration": types.getboolean("illustration"),
+
         "music": types.getboolean("music"),
         "UPDATE": {
             "main_story": c["UPDATE"].getint("main_story"),
@@ -226,11 +227,13 @@ if __name__ == "__main__":
     }
     if config["music"]:
         from fsb5 import FSB5
+
     type_list = ("avatar", "Chart_EZ", "Chart_HD", "Chart_IN", "Chart_AT", "illustrationblur", "illustrationlowres", "illustration", "music")
     for directory in filter(lambda x: getbool(x), type_list):
         shutil.rmtree(directory, True)
         os.mkdir(directory)
         if os.path.isdir("/data/") and not os.getcwd().startswith("/data/"):
+
             with open(directory + "/.nomedia", "wb"):
                 pass
     run(path)

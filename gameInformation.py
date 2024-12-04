@@ -38,7 +38,10 @@ class ByteReader:
             if not __debug__:
                 print(key, t)
             if type(t) == type:
-                setattr(obj, key, self.d[t]())
+                if t in (bool, int, float, str):
+                    setattr(obj, key, self.d[t]())
+                else:
+                    setattr(obj, key, self.readClass(t))
             else:
                 l = []
                 t = t.__args__[0]
@@ -85,6 +88,7 @@ def run(path):
     for i in range(3):
         for ii in range(reader.readInt()):
             songItem = reader.readClass(h.SongsItem)
+            songItem.songsId = songItem.songsId[:-2]
             if len(songItem.difficulty) == 5:
                 songItem.difficulty.pop()
                 songItem.charter.pop()
@@ -101,12 +105,12 @@ def run(path):
     print(difficulty)
     print(table)
 
-    with open("difficulty.tsv", "w", encoding="utf8") as f:
+    with open("info/difficulty.tsv", "w", encoding="utf8") as f:
         for item in difficulty:
             f.write("\t".join(map(str, item)))
             f.write("\n")
 
-    with open("info.tsv", "w", encoding="utf8") as f:
+    with open("info/info.tsv", "w", encoding="utf8") as f:
         for item in table:
             f.write("\t".join(item))
             f.write("\n")
@@ -120,11 +124,11 @@ def run(path):
         elif key.kindOfKey == 2 and key.keyName != "Introduction" and key.keyName not in single:
             illustration.append(key.keyName)
 
-    with open("single.txt", "w", encoding="utf8") as f:
+    with open("info/single.txt", "w", encoding="utf8") as f:
         for item in single:
             f.write("%s\n" % item)
 
-    with open("illustration.txt", "w", encoding="utf8") as f:
+    with open("info/illustration.txt", "w", encoding="utf8") as f:
         for item in illustration:
             f.write("%s\n" % item)
     print(single)
@@ -138,14 +142,14 @@ def run(path):
         if item.key in D:
             D[item.key][1] = item.subIndex
         else:
-            D[item.key] = [item.chinese, item.subIndex]
+            D[item.key] = [item.multiLanguageTitle.chinese, item.subIndex]
 
-    with open("collection.tsv", "w", encoding="utf8") as f:
+    with open("info/collection.tsv", "w", encoding="utf8") as f:
         for key, value in D.items():
             f.write("%s\t%s\t%s\n" % (key, value[0], value[1]))
 
-    with open("avatar.txt", "w", encoding="utf8") as avatar:
-        with open("tmp.tsv", "w", encoding="utf8") as tmp:
+    with open("info/avatar.txt", "w", encoding="utf8") as avatar:
+        with open("info/tmp.tsv", "w", encoding="utf8") as tmp:
             for i in range(reader.readInt()):
                 item = reader.readClass(h.AvatarInfo)
                 avatar.write(item.name)
@@ -154,7 +158,7 @@ def run(path):
 
     reader = ByteReader(tips[8:])
 
-    with open("tips.txt", "w", encoding="utf8") as f:
+    with open("info/tips.txt", "w", encoding="utf8") as f:
         for i in range(reader.readInt()):
             f.write(reader.readString())
             f.write("\n")
@@ -167,4 +171,6 @@ if __name__ == "__main__":
         path = r.stdout[8:-1].decode()
     else:
         path = sys.argv[1]
+    if not os.path.isdir("info"):
+        os.mkdir("info")
     run(path)

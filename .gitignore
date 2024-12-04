@@ -3,9 +3,14 @@
 *.csv
 *.txt
 !/requirements.txt
+avatar/
+Chart_EZ/
+Chart_HD/
+Chart_IN/
+Chart_AT/
 Illustration/
 IllustrationBlur/
 IllustrationLowRes/
 music/
 splited_music/
-config.ini
+phira/

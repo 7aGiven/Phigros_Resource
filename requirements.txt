@@ -1,4 +1,2 @@
 UnityPy==1.10.18
 fsb5
-pyqt5
-pyqt5-tools

@@ -31,6 +31,15 @@ queue_out = Queue()
 queue_in = Queue()
 
 
+
+def getbool(t):
+    if t[:6] == "Chart_":
+        return config["chart"]
+    else:
+        return config[t]
+
+
+
 def io():
     while True:
         item = queue_in.get()
@@ -74,19 +83,16 @@ def save(key, entry):
         obj.image.save(bytesIO, "png")
         queue_in.put(("avatar/%s.png" % key, bytesIO))
     elif config["chart"] and key[-14:-7] == "/Chart_" and key[-5:] == ".json":
-        print(key)
-        p = "chart/" + key[:-14]
-        if not os.path.exists(p):
-        	os.mkdir(p)
-        queue_in.put(("chart/%s/%s.json" % (key[:-14], key[-7:-5]), obj.script))
-    elif config["illustrationBlur"] and key[-23:] == ".0/IllustrationBlur.png":
+
+        queue_in.put(("Chart_%s/%s.json" % (key[-7:-5], key[:-14]), obj.script))
+    elif config["illustrationblur"] and key[-23:] == ".0/IllustrationBlur.png":
         key = key[:-23]
         bytesIO = BytesIO()
         obj.image.save(bytesIO, "png")
-        queue_in.put(("illustrationBlur/%s.png" % key, bytesIO))
-    elif config["illustrationLowRes"] and key[-25:] == ".0/IllustrationLowRes.png":
+        queue_in.put(("IllustrationBlur/%s.png" % key, bytesIO))
+    elif config["illustrationlowres"] and key[-25:] == ".0/IllustrationLowRes.png":
         key = key[:-25]
-        pool.submit(save_image, "illustrationLowRes/%s.png" % key, obj.image)
+        pool.submit(save_image, "IllustrationLowRes/%s.png" % key, obj.image)
     elif config["illustration"] and key[-19:] == ".0/Illustration.png":
         key = key[:-19]
         pool.submit(save_image, "illustration/%s.png" % key, obj.image)
@@ -207,9 +213,11 @@ if __name__ == "__main__":
     config = {
         "avatar": types.getboolean("avatar"),
         "chart": types.getboolean("Chart"),
-        "illustrationBlur": types.getboolean("IllustrationBlur"),
-        "illustrationLowRes": types.getboolean("IllustrationLowRes"),
-        "illustration": types.getboolean("Illustration"),
+
+        "illustrationblur": types.getboolean("illustrationBlur"),
+        "illustrationlowres": types.getboolean("illustrationLowRes"),
+        "illustration": types.getboolean("illustration"),
+
         "music": types.getboolean("music"),
         "UPDATE": {
             "main_story": c["UPDATE"].getint("main_story"),
@@ -219,13 +227,13 @@ if __name__ == "__main__":
     }
     if config["music"]:
         from fsb5 import FSB5
-    type_list = ("avatar", "chart", "illustrationBlur", "illustrationLowRes", "illustration", "music")
-    for directory in type_list:
-        if not config[directory]:
-    	    continue
-        if not os.path.isdir(directory):
-            os.mkdir(directory)
-        if os.path.isdir("/system/") and not os.getcwd().startswith("/data/"):
+
+    type_list = ("avatar", "Chart_EZ", "Chart_HD", "Chart_IN", "Chart_AT", "illustrationblur", "illustrationlowres", "illustration", "music")
+    for directory in filter(lambda x: getbool(x), type_list):
+        shutil.rmtree(directory, True)
+        os.mkdir(directory)
+        if os.path.isdir("/data/") and not os.getcwd().startswith("/data/"):
+
             with open(directory + "/.nomedia", "wb"):
                 pass
     run(path)

@@ -39,6 +39,7 @@ def run(path):
                 song["charter"].pop()
             for i in range(len(song["difficulty"])):
                 song["difficulty"][i] = str(round(song["difficulty"][i], 1))
+            song["songsId"] = song["songsId"][:-2]
             difficulty.append([song["songsId"]]+song["difficulty"])
             table.append((song["songsId"], song["songsName"], song["composer"], song["illustrator"], *song["charter"]))
 

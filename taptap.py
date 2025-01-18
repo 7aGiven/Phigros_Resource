@@ -27,9 +27,9 @@ def taptap(appid):
 
     nonce = "".join(random.sample(sample, 5))
     t = int(time.time())
-    byte = "X-UA=%s&end_point=d1&id=%d&node=%s&nonce=%s&time=%sPeCkE6Fu0B10Vm9BKfPfANwCUAn5POcs" % (X_UA, apkid, uid, nonce, t)
+    byte = "X-UA=%s&abi=arm64-v8a,armeabi-v7a,armeabi&id=%d&node=%s&nonce=%s&sandbox=1&screen_densities=xhdpi&time=%sPeCkE6Fu0B10Vm9BKfPfANwCUAn5POcs" % (X_UA, apkid, uid, nonce, t)
     md5 = hashlib.md5(byte.encode()).hexdigest()
-    body = "sign=%s&node=%s&time=%s&id=%d&nonce=%s&end_point=d1" % (md5, uid, t, apkid, nonce)
+    body = "node=%s&sandbox=1&sign=%s&abi=arm64-v8a%%2Carmeabi-v7a%%2Carmeabi&time=%s&id=%d&nonce=%s&screen_densities=xhdpi" % (uid, md5, t, apkid, nonce)
 
     conn.request(
         "POST",

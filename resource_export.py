@@ -77,7 +77,7 @@ def save(key, entry):
         print(key)
         p = "chart/" + key[:-14]
         if not os.path.exists(p):
-        	os.mkdir(p)
+            os.mkdir(p)
         queue_in.put(("chart/%s/%s.json" % (key[:-14], key[-7:-5]), obj.script))
     elif config["illustrationBlur"] and key[-23:] == ".0/IllustrationBlur.png":
         key = key[:-23]
@@ -222,7 +222,7 @@ if __name__ == "__main__":
     type_list = ("avatar", "chart", "illustrationBlur", "illustrationLowRes", "illustration", "music")
     for directory in type_list:
         if not config[directory]:
-    	    continue
+            continue
         if not os.path.isdir(directory):
             os.mkdir(directory)
         if os.path.isdir("/system/") and not os.getcwd().startswith("/data/"):

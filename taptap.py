@@ -11,7 +11,7 @@ sample = string.ascii_lowercase + string.digits
 
 def taptap(appid):
     uid = uuid.uuid4()
-    X_UA = "V=1&PN=TapTap&VN_CODE=206012000&LOC=CN&LANG=zh_CN&CH=default&UID=%s" % uid
+    X_UA = "V=1&PN=TapTap&VN=2.40.1-rel.100000&VN_CODE=240011000&LOC=CN&LANG=zh_CN&CH=default&UID=%s&NT=1&SR=1080x2030&DEB=Xiaomi&DEM=Redmi+Note+5&OSV=9" % uid
     
     conn = HTTPSConnection("api.taptapdada.com")
     conn.request(

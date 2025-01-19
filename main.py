@@ -2,7 +2,7 @@ import atexit
 from configparser import ConfigParser
 import tkinter
 import gameInformation
-import resource_export
+from . import resource
 
 path = tkinter.Entry()
 path.pack()
@@ -48,7 +48,7 @@ def callback():
     for key, value in d.items():
         config[key] = value.get()
     gameInformation.run(path.get())
-    resource_export.run(path.get(), config)
+    resource.run(path.get(), config)
 
 
 tkinter.Button(text="执行", command = callback).pack()

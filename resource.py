@@ -229,3 +229,5 @@ if __name__ == "__main__":
             with open(directory + "/.nomedia", "wb"):
                 pass
     run(path)
+    
+ # type: ignore

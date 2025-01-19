@@ -2,7 +2,7 @@ import atexit
 from configparser import ConfigParser
 import tkinter
 import gameInformation
-import resource
+from . import resource
 
 path = tkinter.Entry()
 path.pack()

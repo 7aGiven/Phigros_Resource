@@ -79,15 +79,15 @@ def save(key, entry):
         if not os.path.exists(p):
             os.mkdir(p)
         queue_in.put(("chart/%s/%s.json" % (key[:-14], key[-7:-5]), obj.script))
-    elif config["illustrationBlur"] and key[-23:] == ".0/IllustrationBlur.png":
+    elif config["illustrationBlur"] and key[-23:-3] == ".0/IllustrationBlur.":
         key = key[:-23]
         bytesIO = BytesIO()
         obj.image.save(bytesIO, "png")
         queue_in.put(("illustrationBlur/%s.png" % key, bytesIO))
-    elif config["illustrationLowRes"] and key[-25:] == ".0/IllustrationLowRes.png":
+    elif config["illustrationLowRes"] and key[-25:-3] == ".0/IllustrationLowRes.":
         key = key[:-25]
         pool.submit(save_image, "illustrationLowRes/%s.png" % key, obj.image)
-    elif config["illustration"] and key[-19:] == ".0/Illustration.png":
+    elif config["illustration"] and key[-19:-3] == ".0/Illustration.":
         key = key[:-19]
         pool.submit(save_image, "illustration/%s.png" % key, obj.image)
     elif config["music"] and key[-12:] == ".0/music.wav":

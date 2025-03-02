@@ -14,8 +14,19 @@ from UnityPy import Environment
 from UnityPy.classes import AudioClip
 from UnityPy.enums import ClassIDType
 from zipfile import ZipFile
+from androguard.core.apk import APK
 
 
+def extract_version(apk_path):
+    try:
+        apk = APK(apk_path)
+        version = apk.get_androidversion_name()
+        with open('info/ver.txt', 'w', encoding='utf-8') as f:
+            f.write(version)
+        return version
+    except Exception as e:
+        print(f"解析版本号失败: {e}")
+        return None
 
 class ByteReader:
     def __init__(self, data):
@@ -97,6 +108,9 @@ def save(key, entry):
 
 
 def run(path):
+    version = extract_version(path)  # 插入解析版本号的调用
+    print(f'APK 版本: {version}')
+
     with ZipFile(path) as apk:
         with apk.open("assets/aa/catalog.json") as f:
             data = json.load(f)
@@ -229,3 +243,4 @@ if __name__ == "__main__":
             with open(directory + "/.nomedia", "wb"):
                 pass
     run(path)
+ # type: ignore

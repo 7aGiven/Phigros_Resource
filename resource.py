@@ -219,6 +219,7 @@ if __name__ == "__main__":
     }
     if config["music"]:
         from fsb5 import FSB5
+        from fsb5 import vorbis
     type_list = ("avatar", "chart", "illustrationBlur", "illustrationLowRes", "illustration", "music")
     for directory in type_list:
         if not config[directory]:

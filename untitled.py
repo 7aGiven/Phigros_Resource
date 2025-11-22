@@ -140,9 +140,9 @@ class Ui_Form(object):
         config.read("config.ini", encoding="utf-8")
         config.set("TYPES", "avatar", chkl[0])
         config.set("TYPES", "Chart", chkl[1])
-        config.set("TYPES", "IllustrationBlur", chkl[2])
-        config.set("TYPES", "IllustrationLowRes", chkl[3])
-        config.set("TYPES", "Illustration", chkl[4])
+        config.set("TYPES", "Illustration", chkl[2])
+        config.set("TYPES", "IllustrationBlur", chkl[3])
+        config.set("TYPES", "IllustrationLowRes", chkl[4])
         config.set("TYPES", "music", chkl[5])
         with open("config.ini", "w", encoding="utf-8") as f:
             config.write(f)

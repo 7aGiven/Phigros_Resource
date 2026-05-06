@@ -38,16 +38,31 @@ def run(path, logger):
         if key == "otherSongs":
             continue
         for song in songs:
-            if len(song["difficulty"]) == 5:
-                song["difficulty"].pop()
-            if song["difficulty"][-1] == 0.0:
-                song["difficulty"].pop()
-                song["charter"].pop()
             for i in range(len(song["difficulty"])):
                 song["difficulty"][i] = str(round(song["difficulty"][i], 1))
-            song["songsId"] = song["songsId"][:-2]
-            difficulty.append([song["songsId"]]+song["difficulty"])
-            table.append((song["songsId"], song["songsName"], song["composer"], song["illustrator"], *song["charter"]))
+            if song["songsName"] == "望影の方舟Six":
+                difficulty.append([song["songsId"]] + song["difficulty"] + ["0.0"] + song["difficulty"])
+                song["charter"].append("NULL")
+                for i in range(0,3):
+                    song["charter"].append(song["charter"][i])
+            else:
+                difficulty.append([song["songsId"]] + song["difficulty"])
+            if song["songsName"] == "Random":
+                a = ["","[R]","[A]","[N]","[D]","[O]","[M]"]
+                charters = [
+    ["Barbarianerman", "IMD_6", "_鉄"],
+    ["Barbarianerman × V17AMax", "IMD_6 × JKy", "_鉄 × Rikko"],
+    ["Barbarianerman × Pcat", "IMD_6 × Ctymax", "_鉄 × NerSAN"],
+    ["Barbarianerman × TimiTini", "IMD_6 × Gausbon", "_鉄 × Myna"],
+    ["Barbarianerman × Clutter", "IMD_6 × Uvernight", "_鉄 × Su1fuR"],
+    ["Barbarianerman × 阿爽", "IMD_6 × 晨", "_鉄 × 百九十八"],
+    ["Barbarianerman × J.R", "IMD_6 × Likey", "_鉄 × XMT小咩兔"]
+]
+                for i in range(0,7):
+                    difficulty.append([song["songsId"][:-1] + str(i)] + song["difficulty"])
+                    table.append((song["songsId"][:-1] + str(i), song["songsName"] + a[i], song["composer"], song["illustrator"], *charters[i]))
+            else:
+                table.append((song["songsId"], song["songsName"], song["composer"], song["illustrator"], *song["charter"]))
 
     logger.info(difficulty)
     logger.info(table)

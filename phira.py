@@ -2,7 +2,7 @@ import os
 import shutil
 from zipfile import ZipFile, BadZipFile
 
-levels = ["EZ", "HD", "IN", "AT"]
+levels = ["EZ", "HD", "IN", "AT","Legacy","EZ_Error","HD_Error","IN_Error"]
 
 # 删除旧目录并创建新目录
 try:
@@ -60,6 +60,8 @@ for id, info in infos.items():
     try:
         print(f"正在处理：{info['Name']}，作曲者：{info['Composer']}")
         for level_index in range(len(info.get("difficulty", []))):
+            if info['difficulty'][level_index] == "0.0":
+                continue
             level = levels[level_index]
             pez_path = f"phira/{level}/{id}-{level}.pez"
             try:
@@ -68,9 +70,9 @@ for id, info in infos.items():
                     info_txt_content = (
                         f"#\n"
                         f"Name: {info['Name']}\n"
-                        f"Song: {id}.ogg\n"
-                        f"Picture: {id}.png\n"
-                        f"Chart: {id}.json\n"
+                        f"Song: {id[:-2]}.ogg\n"
+                        f"Picture: {id[:-2]}.png\n"
+                        f"Chart: {id[:-2]}.json\n"
                         f"Level: {level} Lv.{info['difficulty'][level_index]}\n"
                         f"Composer: {info['Composer']}\n"
                         f"Illustrator: {info['Illustrator']}\n"
@@ -80,19 +82,19 @@ for id, info in infos.items():
 
                     # 添加文件到 .pez 压缩包
                     try:
-                        pez.write(f"chart/{id}.0/{level}.json", f"{id}.json")
+                        pez.write(f"chart/{id}/{level}.json", f"{id[:-2]}.json")
                     except FileNotFoundError:
-                        print(f"警告：未找到 {id} 的 {level} 图表文件 (chart/{id}.0/{level}.json)。")
+                        print(f"警告：未找到 {id} 的 {level} 图表文件 (chart/{id}/{level}.json)。")
 
                     try:
-                        pez.write(f"IllustrationLowRes/{id}.png", f"{id}.png")
+                        pez.write(f"illustrationLowRes/{id[:-2]}.png", f"{id[:-2]}.png")
                     except FileNotFoundError:
-                        print(f"警告：未找到 {id} 的插图文件 (IllustrationLowRes/{id}.png)。")
+                        print(f"警告：未找到 {id} 的插图文件 (illustrationLowRes/{id[:-2]}.png)。")
 
                     try:
-                        pez.write(f"music/{id}.ogg", f"{id}.ogg")
+                        pez.write(f"music/{id[:-2]}.ogg", f"{id[:-2]}.ogg")
                     except FileNotFoundError:
-                        print(f"警告：未找到 {id} 的音乐文件 (music/{id}.ogg)。")
+                        print(f"警告：未找到 {id} 的音乐文件 (music/{id[:-2]}.ogg)。")
 
             except BadZipFile as e:
                 print(f"错误：创建 .pez 文件 {pez_path} 时出错 - {e}")

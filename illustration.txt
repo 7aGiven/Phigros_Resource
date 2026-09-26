@@ -43,6 +43,11 @@ Luminescence
 Retribution
 DESTRUCTION 3,2,1
 Distorted Fate
+About The Universe
+Implexrough
+Evanescent
+Entrance to the Chaos
+Exoplanetary Mirage
 Ποσειδών
 WATER
 Miracle Forest (VIP Mix)
@@ -166,3 +171,5 @@ Alb
 Incyde
 彩
 玩具狂奏曲 -終焉-
+[NWAD]
+Devastating History

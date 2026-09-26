@@ -78,6 +78,18 @@ def save(key, entry, pool, logger):
         if not os.path.exists(p):
             os.mkdir(p)
         queue_in.put(("chart/%s/%s.json" % (key[:-14], key[-7:-5]), obj.script))
+    elif config["chart"] and key[-18:-11] == "/Chart_" and key[-5:] == ".json":
+        logger.info(key)
+        p = "chart/" + key[:-18]
+        if not os.path.exists(p):
+            os.mkdir(p)
+        queue_in.put(("chart/%s/%s.json" % (key[:-18], key[-11:-5]), obj.script))
+    elif config["chart"] and key[-20:-13] == "/Chart_" and key[-5:] == ".json":
+        logger.info(key)
+        p = "chart/" + key[:-20]
+        if not os.path.exists(p):
+            os.mkdir(p)
+        queue_in.put(("chart/%s/%s.json" % (key[:-20], key[-13:-5]), obj.script))
     elif config["illustrationBlur"] and key[-23:-3] == ".0/IllustrationBlur.":
         key = key[:-23]
         bytesIO = BytesIO()

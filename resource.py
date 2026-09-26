@@ -137,7 +137,9 @@ def run(path, logger):
             del table[i]
         elif table[i][0][:14] == "Assets/Tracks/":
             table[i][0] = table[i][0][14:]
-    for key, value in table:
+    for i, (key, value) in enumerate(table):
+        if '_' in value:
+            table[i][1] = value.split('_', 1)[1]
         logger.info('{key}, {value}'.format(key=key, value=value))
 
     if config["avatar"]:

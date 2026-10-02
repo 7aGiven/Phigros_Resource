@@ -82,12 +82,15 @@ for id, info in infos.items():
                     try:
                         pez.write(f"chart/{id}.0/{level}.json", f"{id}.json")
                     except FileNotFoundError:
-                        print(f"警告：未找到 {id} 的 {level} 图表文件 (chart/{id}.0/{level}.json)。")
+                        print(f"警告：未找到 {id} 的 {level} 谱面文件 (chart/{id}.0/{level}.json)。")
 
                     try:
                         pez.write(f"IllustrationLowRes/{id}.png", f"{id}.png")
                     except FileNotFoundError:
-                        print(f"警告：未找到 {id} 的插图文件 (IllustrationLowRes/{id}.png)。")
+                        try:
+                            pez.write(f"IllustrationLowRes/{id}_{level}.png", f"{id}.png")
+                        except FileNotFoundError:
+                            print(f"警告：未找到 {id} 的曲绘文件 (IllustrationLowRes/{id}.png)。")
 
                     try:
                         pez.write(f"music/{id}.ogg", f"{id}.ogg")

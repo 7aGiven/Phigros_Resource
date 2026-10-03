@@ -16,7 +16,7 @@ Let's! Get! Higher!!!
 NO ONE YES PIGEONS
 One! Two! Three! Fire!!!
 phigrOS正在加载中...
-print("Hello tips3.0");
+print("Hello tips 4.0");
 Redemption.
 rks是RankingScore，不是热开水！（认真脸）
 Saturn新闻频道：插播一条紧急播报，请不要看向晚上的天空或月亮。
@@ -58,7 +58,7 @@ Yooooooooooooooooooo
 扉格晚五点，周五准时更新！
 分数我所欲也，acc亦我所欲也，若二者不可得兼，多练也。
 附近 5 米内，有一只鸽子，正在靠近......
-感谢各位小鸽子们陪伴我们走过了六个年头
+感谢各位小鸽子们陪伴我们走过了七个年头
 高三党，现在，立刻，去给我学习！！！
 给多押note镀层金，我就是这个谱面里最靓的仔
 歌曲可以用标题、难度、分数的分类顺序或逆序排序咕！
@@ -178,7 +178,7 @@ Yooooooooooooooooooo
 这里为什么会有note啦！
 这日子是越来越有判头了（指判定线
 这是一条来自1.0.0版本的Tip！（错乱）
-这是一条属于3.0版本的Tip！
+这是一条属于4.0版本的Tip！
 这张谱看起来好可怕......
 众所周知，鸽游一年有377天
 主线章节一~四已整理进Legacy章节。

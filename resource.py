@@ -67,6 +67,7 @@ classes = ClassIDType.TextAsset, ClassIDType.Sprite, ClassIDType.AudioClip
 def save(key, entry, pool, logger):
     obj = entry.get_filtered_objects(classes)
     obj = next(obj).read()
+    chapter9_ending_chart_id = "WhatdoyouwantmorethanaHappyending.Apo11oHALOprogramft安月名莉子大瀬良あい"
     if config["avatar"] and key[:7] == "avatar.":
         key = key[7:]
         bytesIO = BytesIO()
@@ -93,6 +94,18 @@ def save(key, entry, pool, logger):
         key = key[:-12]
         pool.submit(save_music, "music/%s.ogg" % key, obj)
         # save_music(f"music/{key}.wav", obj)
+    ## 第九章谢幕曲四难度差分曲绘
+    elif key.startswith("%s.0/Illustration" % chapter9_ending_chart_id):
+        level_id = key[-7:-4]  # _EZ/_HD/_IN/_AT
+        if level_id[0] == "_":
+            if config["illustrationBlur"] and key[-26:-7] == ".0/IllustrationBlur":
+                bytesIO = BytesIO()
+                obj.image.save(bytesIO, "png")
+                queue_in.put(("illustrationBlur/%s%s.png" % (chapter9_ending_chart_id, level_id), bytesIO))
+            elif config["illustrationLowRes"] and key[-28:-7] == ".0/IllustrationLowRes":
+                pool.submit(save_image, "illustrationLowRes/%s%s.png" % (chapter9_ending_chart_id, level_id), obj.image)
+            elif config["illustration"] and key[-22:-7] == ".0/Illustration":
+                pool.submit(save_image, "illustration/%s%s.png" % (chapter9_ending_chart_id, level_id), obj.image)
 
 
 def run(path, logger):

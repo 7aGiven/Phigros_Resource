@@ -10,7 +10,7 @@
 曲id，曲名，曲师，画师，谱师
 
 [头像图片](../../tree/avatar)，
-[铺面文件](../../tree/chart)，
+[谱面文件](../../tree/chart)，
 [曲绘](../../tree/illustration)，
 [模糊曲绘](../../tree/illustrationBlur)，
 [低质量曲绘](../../tree/illustrationLowRes)，
